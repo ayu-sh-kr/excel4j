@@ -46,7 +46,7 @@ public class ExcelReaderImpl<T> implements ExcelReader<T> {
 
             Map<Integer, Field> fieldMap = GeneralUtil.getCellMap(clazz);
 
-            for(int rowIdx = 1; rowIdx < sheet.getLastRowNum(); rowIdx++){
+            for(int rowIdx = 1; rowIdx <= sheet.getLastRowNum(); rowIdx++){
 
                 Row row = sheet.getRow(rowIdx);
                 T instance = clazz.getDeclaredConstructor().newInstance();
@@ -66,9 +66,8 @@ public class ExcelReaderImpl<T> implements ExcelReader<T> {
                         case NUMERIC -> typeResolver.resolveNumber(instance, field, cell);
                         case BOOLEAN -> typeResolver.resolveBoolean(instance, field, cell);
                     }
-
-                    resultList.add(instance);
                 }
+                resultList.add(instance);
             }
 
             return resultList;
