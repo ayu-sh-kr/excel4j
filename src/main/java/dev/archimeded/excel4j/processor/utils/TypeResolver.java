@@ -12,10 +12,10 @@ public class TypeResolver<T> {
 
     public void resolveNumber(T instance, Field field, Cell cell) throws IllegalAccessException {
         switch (field.getType().getSimpleName()){
-            case "Long", "long" -> field.setLong(instance, (long) cell.getNumericCellValue());
-            case "Integer", "int" -> field.setInt(instance, (int) cell.getNumericCellValue());
-            case "Double", "double" -> field.setDouble(instance,  cell.getNumericCellValue());
-            case "Float", "float" -> field.setFloat(instance, (float) cell.getNumericCellValue());
+            case "Long", "long" -> field.set(instance, (long) cell.getNumericCellValue());
+            case "Integer", "int" -> field.set(instance, (int) cell.getNumericCellValue());
+            case "Double", "double" -> field.set(instance,  cell.getNumericCellValue());
+            case "Float", "float" -> field.set(instance, (float) cell.getNumericCellValue());
             case "Date" -> field.set(instance, cell.getDateCellValue());
             case "LocalDateTime" -> field.set(instance, cell.getLocalDateTimeCellValue());
             default -> throw new IllegalStateException("Unexpected value: " + field.getType());
@@ -25,4 +25,5 @@ public class TypeResolver<T> {
     public void resolveBoolean(T instance, Field field, Cell cell) throws IllegalAccessException {
         field.setBoolean(instance, cell.getBooleanCellValue());
     }
+
 }
