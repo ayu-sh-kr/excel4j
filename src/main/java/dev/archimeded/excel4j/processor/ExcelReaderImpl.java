@@ -3,7 +3,6 @@ package dev.archimeded.excel4j.processor;
 import dev.archimeded.excel4j.processor.contracts.ExcelReader;
 import dev.archimeded.excel4j.processor.utils.GeneralUtil;
 import dev.archimeded.excel4j.processor.utils.TypeResolver;
-import org.apache.poi.ss.formula.functions.T;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
@@ -19,7 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class ExcelReaderImpl implements ExcelReader<T> {
+public class ExcelReaderImpl<T> implements ExcelReader<T> {
     @Override
     public List<T> read(File file, Class<T> clazz) {
         try (InputStream inputStream = new FileInputStream(file)) {
@@ -60,10 +59,12 @@ public class ExcelReaderImpl implements ExcelReader<T> {
 
                     Cell cell = row.getCell(cellIndex);
 
+                    TypeResolver<T> typeResolver = new TypeResolver<>();
+
                     switch (cell.getCellType()) {
-                        case STRING -> TypeResolver.resolveString(instance, field, cell);
-                        case NUMERIC -> TypeResolver.resolveNumber(instance, field, cell);
-                        case BOOLEAN -> TypeResolver.resolveBoolean(instance, field, cell);
+                        case STRING -> typeResolver.resolveString(instance, field, cell);
+                        case NUMERIC -> typeResolver.resolveNumber(instance, field, cell);
+                        case BOOLEAN -> typeResolver.resolveBoolean(instance, field, cell);
                     }
 
                     resultList.add(instance);
