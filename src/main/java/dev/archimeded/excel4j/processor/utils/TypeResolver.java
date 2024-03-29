@@ -1,17 +1,16 @@
 package dev.archimeded.excel4j.processor.utils;
 
-import org.apache.poi.ss.formula.functions.T;
 import org.apache.poi.ss.usermodel.Cell;
 
 import java.lang.reflect.Field;
 
-public class TypeResolver {
+public class TypeResolver<T> {
 
-    public static void resolveString(T instance, Field field, Cell cell) throws IllegalAccessException {
+    public void resolveString(T instance, Field field, Cell cell) throws IllegalAccessException {
         field.set(instance, cell.getStringCellValue());
     }
 
-    public static void resolveNumber(T instance, Field field, Cell cell) throws IllegalAccessException {
+    public void resolveNumber(T instance, Field field, Cell cell) throws IllegalAccessException {
         switch (field.getType().getSimpleName()){
             case "Long", "long" -> field.setLong(instance, (long) cell.getNumericCellValue());
             case "Integer", "int" -> field.setInt(instance, (int) cell.getNumericCellValue());
@@ -23,7 +22,7 @@ public class TypeResolver {
         }
     }
 
-    public static void resolveBoolean(T instance, Field field, Cell cell) throws IllegalAccessException {
+    public void resolveBoolean(T instance, Field field, Cell cell) throws IllegalAccessException {
         field.setBoolean(instance, cell.getBooleanCellValue());
     }
 }
