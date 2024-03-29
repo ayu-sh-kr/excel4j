@@ -35,23 +35,21 @@ public class GeneralUtil {
     }
 
 
-    public static Map<Integer, String> getCellMap(Class<?> clazz){
+    public static Map<Integer, Field> getCellMap(Class<?> clazz){
         if(!clazz.isAnnotationPresent(ExcelSheet.class)){
             throw new RuntimeException("Class not annotated with @ExcelSheet");
         }
 
         List<Field> fields = List.of(clazz.getFields());
 
-        Map<Integer, String> columnMap = new HashMap<>();
+        Map<Integer, Field> columnMap = new HashMap<>();
 
         fields
                 .forEach(field -> {
                     if (field.isAnnotationPresent(ExcelCell.class)
                         && field.getAnnotation(ExcelCell.class).cellNumber() != -1){
                         int idx = field.getAnnotation(ExcelCell.class).cellNumber();
-                        String name = field.getAnnotation(ExcelCell.class).name();
-
-                        columnMap.put(idx, name);
+                        columnMap.put(idx, field);
                     }
                 });
 
