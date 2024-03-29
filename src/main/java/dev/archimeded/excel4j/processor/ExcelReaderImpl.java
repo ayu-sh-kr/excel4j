@@ -2,10 +2,9 @@ package dev.archimeded.excel4j.processor;
 
 import dev.archimeded.excel4j.processor.contracts.ExcelReader;
 import dev.archimeded.excel4j.processor.utils.GeneralUtil;
-import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
+import dev.archimeded.excel4j.processor.utils.TypeResolver;
 import org.apache.poi.ss.formula.functions.T;
 import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -13,75 +12,69 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.Iterator;
+import java.io.InputStream;
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class ExcelReaderImpl implements ExcelReader<T> {
     @Override
     public List<T> read(File file, Class<T> clazz) {
-        try (XSSFWorkbook workbook = new XSSFWorkbook(file)){
+        try (InputStream inputStream = new FileInputStream(file)) {
+            return read(inputStream, clazz);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public List<T> read(InputStream inputStream, Class<T> clazz) {
+        List<T> resultList = new ArrayList<>();
+        try (XSSFWorkbook workbook = new XSSFWorkbook(inputStream)){
 
             int sheetNo = GeneralUtil.resolveSheetNumber(clazz);
             XSSFSheet sheet = workbook.getSheetAt(sheetNo);
 
-            Iterator<Row> rowIterator = sheet.iterator();
+            Row headerRow = sheet.getRow(0);
 
-            while (rowIterator.hasNext()){
-                Row row = rowIterator.next();
+            for (Cell cell : headerRow) {
+                int cellIndex = cell.getColumnIndex();
+                String headerName = cell.getStringCellValue();
+                System.out.println("Header index: " + cellIndex + ", Header name: " + headerName);
+            }
 
-                Iterator<Cell> cellIterator = row.cellIterator();
+            Map<Integer, Field> fieldMap = GeneralUtil.getCellMap(clazz);
 
-                while (cellIterator.hasNext()){
+            for(int rowIdx = 1; rowIdx < sheet.getLastRowNum(); rowIdx++){
 
-                    Cell cell = cellIterator.next();
+                Row row = sheet.getRow(rowIdx);
+                T instance = clazz.getDeclaredConstructor().newInstance();
 
-                    int cellNo = cell.getColumnIndex();
+                for (Map.Entry<Integer, Field> entry: fieldMap.entrySet()){
 
-                    switch (cell.getCellType()){
+                    int cellIndex = entry.getKey();
 
-                        case CellType.NUMERIC -> {
+                    Field field = entry.getValue();
 
-                        }
+                    Cell cell = row.getCell(cellIndex);
 
-                        case CellType.STRING -> {
-
-                        }
-
-                        case CellType.BOOLEAN -> {
-
-                        }
-
-                        case CellType.FORMULA -> {
-
-                        }
-
-                        case BLANK -> {
-
-                        }
-
-                        case ERROR -> {
-
-                        }
-
-                        case _NONE -> {
-
-                        }
-
-                        case null, default -> {
-
-                        }
+                    switch (cell.getCellType()) {
+                        case STRING -> TypeResolver.resolveString(instance, field, cell);
+                        case NUMERIC -> TypeResolver.resolveNumber(instance, field, cell);
+                        case BOOLEAN -> TypeResolver.resolveBoolean(instance, field, cell);
                     }
+
+                    resultList.add(instance);
                 }
             }
 
-        } catch (IOException | InvalidFormatException e) {
+            return resultList;
+
+        } catch (IOException | NoSuchMethodException | IllegalAccessException |
+                 InstantiationException | InvocationTargetException e) {
             throw new RuntimeException(e);
         }
-        return null;
-    }
-
-    @Override
-    public List<T> read(FileInputStream fileInputStream, Class<T> clazz) {
-        return null;
     }
 }
