@@ -39,7 +39,7 @@ public class GeneralUtil {
         if(!clazz.isAnnotationPresent(ExcelSheet.class)){
             throw new RuntimeException("Class not annotated with @ExcelSheet");
         }
-        
+
         List<Field> fields = List.of(clazz.getDeclaredFields());
 
         Map<Integer, Field> columnMap = new HashMap<>();
