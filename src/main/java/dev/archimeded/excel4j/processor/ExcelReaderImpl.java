@@ -36,13 +36,6 @@ public class ExcelReaderImpl<T> implements ExcelReader<T> {
             int sheetNo = GeneralUtil.resolveSheetNumber(clazz);
             XSSFSheet sheet = workbook.getSheetAt(sheetNo);
 
-            Row headerRow = sheet.getRow(0);
-
-            for (Cell cell : headerRow) {
-                int cellIndex = cell.getColumnIndex();
-                String headerName = cell.getStringCellValue();
-                System.out.println("Header index: " + cellIndex + ", Header name: " + headerName);
-            }
 
             Map<Integer, Field> fieldMap = GeneralUtil.getCellMap(clazz);
 
