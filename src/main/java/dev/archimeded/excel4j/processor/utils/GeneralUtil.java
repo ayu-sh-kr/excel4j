@@ -57,4 +57,23 @@ public class GeneralUtil {
         return columnMap;
     }
 
+    public static <T> Map<Integer, String> getColumnMap(Class<T> clazz) {
+
+        if(!clazz.isAnnotationPresent(ExcelSheet.class)){
+            throw new RuntimeException("Class not annotated with @ExcelSheet");
+        }
+
+        Field[] fields = clazz.getDeclaredFields();
+        Map<Integer, String> columnMap = new HashMap<>();
+
+        for (Field field: fields){
+            if(field.isAnnotationPresent(ExcelCell.class)){
+                columnMap.put(
+                        field.getAnnotation(ExcelCell.class).cellNumber(),
+                        field.getAnnotation(ExcelCell.class).name()
+                );
+            }
+        }
+        return columnMap;
+    }
 }
