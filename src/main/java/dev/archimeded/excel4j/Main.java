@@ -16,8 +16,12 @@ public class Main {
         List<Product> products = excelReader.read(new File("Book1.xlsx"), Product.class);
         products.forEach(System.out::println);
 
-        ExcelOption excelOption = ExcelOption.builder()
+        ExcelOption options = ExcelOption.builder()
                 .with(Product.class)
+                .start(1)
+                .end(products.size())
+                .sheetIndex(0)
+                .listDelimiter(";")
                 .build();
 
         ExcelWriter<Product> excelWriter = new ExcelWriterImpl<>(Product.class);

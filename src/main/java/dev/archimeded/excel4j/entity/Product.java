@@ -2,6 +2,8 @@ package dev.archimeded.excel4j.entity;
 
 import dev.archimeded.excel4j.annotations.ExcelCell;
 import dev.archimeded.excel4j.annotations.ExcelSheet;
+import dev.archimeded.excel4j.annotations.HeaderStyle;
+import dev.archimeded.excel4j.enums.FontFamily;
 import lombok.*;
 
 import java.util.Date;
@@ -11,7 +13,7 @@ import java.util.Date;
 @Getter @Setter
 @ExcelSheet()
 @ToString
-//@HeaderStyle(padding = 2, wrapText = false, fontHeight = 12, font = FontFamily.APTOS_NARROW)
+@HeaderStyle(padding = 2, wrapText = false, fontHeight = 12, font = FontFamily.APTOS_NARROW)
 public class Product {
 
     @ExcelCell(name = "name", cellNumber = 0)

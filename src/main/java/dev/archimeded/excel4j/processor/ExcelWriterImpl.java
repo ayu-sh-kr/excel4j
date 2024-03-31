@@ -19,6 +19,10 @@ public class ExcelWriterImpl<T> implements ExcelWriter<T> {
 
     private final Class<T> clazz;
 
+    private static final int CHARACTER_WIDTH = 256;
+
+    private static final int DEFAULT_CELL_PADDING = 5;
+
 
     @Override
     public File write(File file, List<T> ts, int start, int end, boolean overwrite) {
@@ -45,7 +49,7 @@ public class ExcelWriterImpl<T> implements ExcelWriter<T> {
             Sheet sheet = workbook.createSheet("Sheet 1");
             Row header = sheet.createRow(0);
 
-            createHeaderRow(header, clazz, workbook);
+            createHeaderRow(header, clazz, workbook, sheet);
 
             var map = GeneralUtil.getCellMap(clazz);
 
@@ -99,7 +103,7 @@ public class ExcelWriterImpl<T> implements ExcelWriter<T> {
     }
 
 
-    private void createHeaderRow(Row row, Class<T> clazz, Workbook workbook){
+    private void createHeaderRow(Row row, Class<T> clazz, Workbook workbook, Sheet sheet){
 
         var map = GeneralUtil.getColumnMap(clazz);
 
@@ -121,6 +125,8 @@ public class ExcelWriterImpl<T> implements ExcelWriter<T> {
             Cell cell = row.createCell(idx, CellType.STRING);
             cell.setCellValue(name);
             cell.setCellStyle(cellStyle);
+
+            sheet.setColumnWidth(idx, name.length() * CHARACTER_WIDTH * 2);
         }
 
     }

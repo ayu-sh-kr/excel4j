@@ -4,13 +4,13 @@ import org.apache.poi.ss.usermodel.Cell;
 
 import java.lang.reflect.Field;
 
-public class TypeResolver<T> {
+public class TypeResolver {
 
-    public void resolveString(T instance, Field field, Cell cell) throws IllegalAccessException {
+    public static <T> void resolveString(T instance, Field field, Cell cell) throws IllegalAccessException {
         field.set(instance, cell.getStringCellValue());
     }
 
-    public void resolveNumber(T instance, Field field, Cell cell) throws IllegalAccessException {
+    public static <T> void resolveNumber(T instance, Field field, Cell cell) throws IllegalAccessException {
         switch (field.getType().getSimpleName()){
             case "Long", "long" -> field.set(instance, (long) cell.getNumericCellValue());
             case "Integer", "int" -> field.set(instance, (int) cell.getNumericCellValue());
@@ -22,7 +22,7 @@ public class TypeResolver<T> {
         }
     }
 
-    public void resolveBoolean(T instance, Field field, Cell cell) throws IllegalAccessException {
+    public static <T> void resolveBoolean(T instance, Field field, Cell cell) throws IllegalAccessException {
         field.setBoolean(instance, cell.getBooleanCellValue());
     }
 
