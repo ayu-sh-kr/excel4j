@@ -8,7 +8,7 @@ import java.util.*;
 
 public class GeneralUtil {
 
-    public static Set<String> resolveColumnsName(Class<?> clazz){
+    public static <T> Set<String> resolveColumnsName(Class<T> clazz){
 
         if(!clazz.isAnnotationPresent(ExcelSheet.class)){
             throw new RuntimeException("Class not annotated with @ExcelSheet");
@@ -35,7 +35,7 @@ public class GeneralUtil {
     }
 
 
-    public static Map<Integer, Field> getCellMap(Class<?> clazz){
+    public static <T> Map<Integer, Field> getCellMap(Class<T> clazz){
         if(!clazz.isAnnotationPresent(ExcelSheet.class)){
             throw new RuntimeException("Class not annotated with @ExcelSheet");
         }

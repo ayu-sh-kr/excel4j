@@ -107,8 +107,6 @@ public class ExcelWriterImpl<T> implements ExcelWriter<T> {
 
         var map = GeneralUtil.getColumnMap(clazz);
 
-        System.out.println(map.size());
-
         CellStyle cellStyle;
 
         if(clazz.isAnnotationPresent(HeaderStyle.class)){

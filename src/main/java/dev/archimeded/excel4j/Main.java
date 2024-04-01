@@ -26,13 +26,13 @@ public class Main {
 
         ExcelWriter<Product> excelWriter = new ExcelWriterImpl<>(Product.class);
 
-        ByteArrayOutputStream outputStream = (ByteArrayOutputStream) excelWriter.write(new ByteArrayOutputStream(), products, 1, products.size(), true);
+        ByteArrayOutputStream outputStream = (ByteArrayOutputStream) excelWriter
+                .write(new ByteArrayOutputStream(), products, 1, products.size(), true);
 
         File file = new File("product.xlsx");
         try (FileOutputStream fileOutputStream = new FileOutputStream(file)) {
             fileOutputStream.write(outputStream.toByteArray());
             boolean newFile = file.createNewFile();
-            System.out.println(newFile);
         }catch (IOException ioException){
             System.out.println(ioException.getLocalizedMessage());
         }
