@@ -1,4 +1,4 @@
-package dev.archimeded.excel4j.processor.contracts;
+package dev.archimeded.excel4j.service.contracts;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
