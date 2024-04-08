@@ -6,7 +6,9 @@ import dev.archimeded.excel4j.annotations.HeaderStyle;
 import dev.archimeded.excel4j.enums.FontFamily;
 import lombok.*;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -27,6 +29,9 @@ public class Product {
 
     @ExcelCell(name = "date", cellNumber = 3)
     private Date date;
+
+    @ExcelCell(name = "List", cellNumber = 4)
+    private List<Integer> strings = new ArrayList<>();
 
     public Product(Builder builder){
         this.name = builder.name;
