@@ -1,4 +1,4 @@
-package dev.archimeded.excel4j.processor;
+package dev.archimeded.excel4j.service;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -20,6 +20,10 @@ public class ExcelOption {
 
     private String listDelimiter;
 
+    private String dateRegex;
+
+    private String dateTimeRegex;
+
 
     public static ExcelOptionBuilder builder(){
         return new ExcelOptionBuilder();
@@ -35,6 +39,10 @@ public class ExcelOption {
         private int sheetIndex = 0;
 
         private String listDelimiter = ";";
+
+        private String dateRgx = "dd/MM/yyyy";
+
+        private String dateTimeRgx = "dd/MM/yyyy hh:mm:ss";
 
         public ExcelOptionBuilder with(Class<?> clazz){
             this.clazz = clazz;
@@ -56,13 +64,23 @@ public class ExcelOption {
             return this;
         }
 
+        public ExcelOptionBuilder dateRegex(String dateRgx){
+            this.dateRgx = dateRgx;
+            return this;
+        }
+
+        public ExcelOptionBuilder dateTimeRgx(String dateTimeRgx){
+            this.dateTimeRgx = dateTimeRgx;
+            return this;
+        }
+
         public ExcelOptionBuilder listDelimiter(String delimiter){
             this.listDelimiter = delimiter;
             return this;
         }
 
         public ExcelOption build(){
-            return new ExcelOption(clazz, start, end, sheetIndex, listDelimiter);
+            return new ExcelOption(clazz, start, end, sheetIndex, listDelimiter, dateRgx, dateTimeRgx);
         }
     }
 }
