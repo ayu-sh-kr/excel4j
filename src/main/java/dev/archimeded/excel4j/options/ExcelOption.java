@@ -1,4 +1,4 @@
-package dev.archimeded.excel4j.service;
+package dev.archimeded.excel4j.options;
 
 import lombok.*;
 

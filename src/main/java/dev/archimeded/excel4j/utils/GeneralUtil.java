@@ -1,4 +1,4 @@
-package dev.archimeded.excel4j.service.utils;
+package dev.archimeded.excel4j.utils;
 
 import dev.archimeded.excel4j.annotations.ExcelCell;
 import dev.archimeded.excel4j.annotations.ExcelSheet;
