@@ -2,6 +2,7 @@ package dev.archimeded.excel4j;
 
 import dev.archimeded.excel4j.entity.Product;
 import dev.archimeded.excel4j.service.ExcelOption;
+import dev.archimeded.excel4j.service.ExcelOption.ExcelOptionBuilder;
 import dev.archimeded.excel4j.service.ExcelProcessor;
 import dev.archimeded.excel4j.service.contracts.ExcelReader;
 import dev.archimeded.excel4j.service.contracts.ExcelWriter;
@@ -15,18 +16,20 @@ import java.util.List;
 public class Main {
     public static void main(String[] args) throws IOException {
 
-        ExcelOption options = ExcelOption.builder()
+        ExcelOptionBuilder<Product> builder = new ExcelOptionBuilder<>();
+
+        ExcelOption<Product> options = builder
                 .with(Product.class)
                 .start(1)
                 .sheetIndex(0)
                 .listDelimiter(";")
                 .build();
 
-        ExcelReader<Product> excelReader = ExcelProcessor.getReaderFromOption(options, Product.class);
-        List<Product> products = excelReader.read(new File("Book1.xlsx"), Product.class);
+        ExcelReader<Product> excelReader = ExcelProcessor.getReaderFromOption(options);
+        List<Product> products = excelReader.read(new File("Book1.xlsx"));
         products.forEach(System.out::println);
 
-        ExcelWriter<Product> excelWriter = ExcelProcessor.getWriterFromOption(options, Product.class);
+        ExcelWriter<Product> excelWriter = ExcelProcessor.getWriterFromOption(options);
 
         ByteArrayOutputStream outputStream = (ByteArrayOutputStream) excelWriter
                 .write(new ByteArrayOutputStream(), products, 1, products.size(), true);

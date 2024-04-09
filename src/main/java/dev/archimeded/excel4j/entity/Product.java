@@ -13,7 +13,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter @Setter
-@ExcelSheet()
+@ExcelSheet
 @ToString
 @HeaderStyle(padding = 2, wrapText = false, fontHeight = 12, font = FontFamily.APTOS_NARROW)
 public class Product {
@@ -31,11 +31,13 @@ public class Product {
     private Date date;
 
     @ExcelCell(name = "List", cellNumber = 4)
-    private List<Integer> strings = new ArrayList<>();
+    private List<Double> list = new ArrayList<>();
 
     public Product(Builder builder){
         this.name = builder.name;
         this.category = builder.category;
+        this.date = builder.date;
+        this.list = builder.list;
     }
 
     public static Builder builder() {
@@ -45,6 +47,10 @@ public class Product {
     public static class Builder {
         private String name;
         private String category;
+
+        private Date date;
+
+        private List<Double> list;
 
         public Product build(){
             return new Product(this);
@@ -57,6 +63,16 @@ public class Product {
 
         public Builder category(String category) {
             this.category = category;
+            return this;
+        }
+
+        public Builder date(Date date){
+            this.date = date;
+            return this;
+        }
+
+        public Builder list(List<Double> list){
+            this.list = list;
             return this;
         }
     }
