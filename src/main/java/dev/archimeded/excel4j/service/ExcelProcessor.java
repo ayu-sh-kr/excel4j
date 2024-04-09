@@ -5,12 +5,12 @@ import dev.archimeded.excel4j.service.contracts.ExcelWriter;
 
 public class ExcelProcessor {
 
-    public static <T> ExcelReader<T> getReaderFromOption(ExcelOption excelOption, Class<T> clazz){
+    public static <T> ExcelReader<T> getReaderFromOption(ExcelOption<T> excelOption){
         return new ExcelReaderService<>(excelOption);
     }
 
-    public static <T> ExcelWriter<T> getWriterFromOption(ExcelOption excelOption, Class<T> clazz){
-        return new ExcelWriterService<>(excelOption, clazz);
+    public static <T> ExcelWriter<T> getWriterFromOption(ExcelOption<T> excelOption){
+        return new ExcelWriterService<>(excelOption);
     }
 
 }
