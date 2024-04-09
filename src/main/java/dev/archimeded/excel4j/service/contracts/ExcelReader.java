@@ -7,8 +7,8 @@ import java.util.List;
 
 public interface ExcelReader<T> {
 
-    List<T> read(File file, Class<T> clazz);
+    List<T> read(File file);
 
-    List<T> read(InputStream inputStream, Class<T> clazz);
+    List<T> read(InputStream inputStream);
 
 }
