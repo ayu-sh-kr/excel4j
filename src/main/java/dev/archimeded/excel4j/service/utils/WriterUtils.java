@@ -19,7 +19,4 @@ public class WriterUtils {
         }
         throw new IllegalStateException("Type not list");
     }
-
-    private static void write(Cell cell, Object value, String delimiter){
-    }
 }
