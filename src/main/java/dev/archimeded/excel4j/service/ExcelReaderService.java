@@ -15,8 +15,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
@@ -25,26 +23,26 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class ExcelReaderService<T> implements ExcelReader<T> {
 
-    private final ExcelOption option;
+    private final ExcelOption<T> option;
     @Override
-    public List<T> read(File file, Class<T> clazz) {
+    public List<T> read(File file) {
         try (InputStream inputStream = new FileInputStream(file)) {
-            return read(inputStream, clazz);
+            return read(inputStream);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
 
     @Override
-    public List<T> read(InputStream inputStream, Class<T> clazz) {
+    public List<T> read(InputStream inputStream) {
         List<T> resultList = new ArrayList<>();
         try (XSSFWorkbook workbook = new XSSFWorkbook(inputStream)){
 
-            int sheetNo = GeneralUtil.resolveSheetNumber(clazz);
+            int sheetNo = GeneralUtil.resolveSheetNumber(option.getClazz());
             XSSFSheet sheet = workbook.getSheetAt(sheetNo);
 
 
-            Map<Integer, Field> fieldMap = GeneralUtil.getCellMap(clazz);
+            Map<Integer, Field> fieldMap = GeneralUtil.getCellMap(option.getClazz());
 
             int end = option.getEnd() == -1 ? sheet.getLastRowNum() : option.getEnd();
 
@@ -52,7 +50,7 @@ public class ExcelReaderService<T> implements ExcelReader<T> {
 
                 Row row = sheet.getRow(rowIdx);
 
-                T instance = clazz.getConstructor().newInstance();
+                T instance = option.getClazz().getConstructor().newInstance();
 
                 for (Map.Entry<Integer, Field> entry: fieldMap.entrySet()){
 
@@ -61,14 +59,6 @@ public class ExcelReaderService<T> implements ExcelReader<T> {
                     Field field = entry.getValue();
 
                     Cell cell = row.getCell(cellIndex);
-
-                    Type genericType = field.getGenericType();
-
-                    if(genericType instanceof ParameterizedType parameterizedType){
-                        System.out.println("Simple field name: " + field.getType().getSimpleName());
-                        System.out.println("Parameterized field name: " + parameterizedType.getActualTypeArguments()[0]);
-                    }
-
 
                     switch (cell.getCellType()) {
                         case STRING -> TypeResolver.resolveString(instance, field, cell, option.getListDelimiter());
@@ -82,7 +72,7 @@ public class ExcelReaderService<T> implements ExcelReader<T> {
             return resultList;
 
         } catch (IOException | NoSuchMethodException | IllegalAccessException | InstantiationException |
-                 InvocationTargetException | ParseException e) {
+                 InvocationTargetException | ParseException | ClassCastException e) {
             throw new RuntimeException(e.getLocalizedMessage(), e.getCause());
         }
     }

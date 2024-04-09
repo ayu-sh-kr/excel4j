@@ -18,9 +18,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class ExcelWriterService<T> implements ExcelWriter<T> {
 
-    private final ExcelOption option;
-
-    private final Class<T> clazz;
+    private final ExcelOption<T> option;
 
     private static final int CHARACTER_WIDTH = 256;
 
@@ -52,9 +50,9 @@ public class ExcelWriterService<T> implements ExcelWriter<T> {
             Sheet sheet = workbook.createSheet("Sheet 1");
             Row header = sheet.createRow(0);
 
-            createHeaderRow(header, clazz, workbook, sheet);
+            createHeaderRow(header, option.getClazz(), workbook, sheet);
 
-            var map = GeneralUtil.getCellMap(clazz);
+            var map = GeneralUtil.getCellMap(option.getClazz());
 
             for (int i = 0; i < end; i++){
 
