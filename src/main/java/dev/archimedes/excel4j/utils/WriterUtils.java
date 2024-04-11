@@ -1,4 +1,4 @@
-package dev.archimeded.excel4j.utils;
+package dev.archimedes.excel4j.utils;
 
 import org.apache.poi.ss.usermodel.Cell;
 

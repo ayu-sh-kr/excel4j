@@ -1,6 +1,6 @@
-package dev.archimeded.excel4j.annotations;
+package dev.archimedes.excel4j.annotations;
 
-import dev.archimeded.excel4j.enums.FontFamily;
+import dev.archimedes.excel4j.enums.FontFamily;
 import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.ss.usermodel.IndexedColors;
 

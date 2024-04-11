@@ -1,9 +1,9 @@
-package dev.archimeded.excel4j.service;
+package dev.archimedes.excel4j.service;
 
-import dev.archimeded.excel4j.options.ExcelOption;
-import dev.archimeded.excel4j.service.contracts.ExcelReader;
-import dev.archimeded.excel4j.utils.GeneralUtil;
-import dev.archimeded.excel4j.utils.TypeResolver;
+import dev.archimedes.excel4j.options.ExcelOption;
+import dev.archimedes.excel4j.service.contracts.ExcelReader;
+import dev.archimedes.excel4j.utils.GeneralUtil;
+import dev.archimedes.excel4j.utils.TypeResolver;
 import lombok.RequiredArgsConstructor;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;

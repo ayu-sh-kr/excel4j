@@ -1,4 +1,4 @@
-package dev.archimeded.excel4j.enums;
+package dev.archimedes.excel4j.enums;
 
 public enum FontFamily {
 

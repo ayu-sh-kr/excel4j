@@ -1,4 +1,4 @@
-package dev.archimeded.excel4j.options;
+package dev.archimedes.excel4j.options;
 
 import lombok.*;
 
@@ -14,6 +14,8 @@ public class ExcelOption<T> {
     private int end;
 
     private int sheetIndex;
+
+    private String sheetName;
 
     private String listDelimiter;
 
@@ -34,6 +36,8 @@ public class ExcelOption<T> {
         private int end = -1;
 
         private int sheetIndex = 0;
+
+        private String sheetName = "Sheet" + sheetIndex;
 
         private String listDelimiter = ";";
 
@@ -61,6 +65,11 @@ public class ExcelOption<T> {
             return this;
         }
 
+        public ExcelOptionBuilder<T> sheetName(String sheetName){
+            this.sheetName = sheetName;
+            return this;
+        }
+
         public ExcelOptionBuilder<T> dateRegex(String dateRgx){
             this.dateRgx = dateRgx;
             return this;
@@ -77,7 +86,9 @@ public class ExcelOption<T> {
         }
 
         public ExcelOption<T> build(){
-            return new ExcelOption<T>(clazz, start, end, sheetIndex, listDelimiter, dateRgx, dateTimeRgx);
+            return new ExcelOption<>(
+                    clazz, start, end, sheetIndex, sheetName, listDelimiter, dateRgx, dateTimeRgx
+            );
         }
     }
 }

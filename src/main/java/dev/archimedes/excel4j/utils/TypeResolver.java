@@ -1,6 +1,6 @@
-package dev.archimeded.excel4j.utils;
+package dev.archimedes.excel4j.utils;
 
-import dev.archimeded.excel4j.options.ExcelOption;
+import dev.archimedes.excel4j.options.ExcelOption;
 import org.apache.poi.ss.usermodel.Cell;
 
 import java.lang.reflect.Field;

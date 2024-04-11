@@ -1,7 +1,7 @@
-package dev.archimeded.excel4j.utils;
+package dev.archimedes.excel4j.utils;
 
-import dev.archimeded.excel4j.annotations.ExcelCell;
-import dev.archimeded.excel4j.annotations.ExcelSheet;
+import dev.archimedes.excel4j.annotations.ExcelCell;
+import dev.archimedes.excel4j.annotations.ExcelSheet;
 
 import java.lang.reflect.Field;
 import java.util.*;

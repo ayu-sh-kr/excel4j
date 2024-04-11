@@ -1,7 +1,7 @@
-import dev.archimeded.excel4j.entity.Product;
-import dev.archimeded.excel4j.options.ExcelOption;
-import dev.archimeded.excel4j.processors.ExcelProcessor;
-import dev.archimeded.excel4j.service.contracts.ExcelReader;
+import dev.archimedes.excel4j.entity.Product;
+import dev.archimedes.excel4j.options.ExcelOption;
+import dev.archimedes.excel4j.processors.ExcelProcessor;
+import dev.archimedes.excel4j.service.contracts.ExcelReader;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;

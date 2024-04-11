@@ -1,11 +1,10 @@
-package dev.archimeded.excel4j;
+package dev.archimedes.excel4j;
 
-import dev.archimeded.excel4j.entity.Product;
-import dev.archimeded.excel4j.options.ExcelOption;
-import dev.archimeded.excel4j.options.ExcelOption.ExcelOptionBuilder;
-import dev.archimeded.excel4j.processors.ExcelProcessor;
-import dev.archimeded.excel4j.service.contracts.ExcelReader;
-import dev.archimeded.excel4j.service.contracts.ExcelWriter;
+import dev.archimedes.excel4j.entity.Product;
+import dev.archimedes.excel4j.options.ExcelOption;
+import dev.archimedes.excel4j.processors.ExcelProcessor;
+import dev.archimedes.excel4j.service.contracts.ExcelReader;
+import dev.archimedes.excel4j.service.contracts.ExcelWriter;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -14,11 +13,10 @@ import java.io.IOException;
 import java.util.List;
 
 public class Main {
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) {
 
-        ExcelOptionBuilder<Product> builder = new ExcelOptionBuilder<>();
 
-        ExcelOption<Product> options = builder
+        ExcelOption<Product> options = ExcelOption.<Product>builder()
                 .with(Product.class)
                 .start(1)
                 .sheetIndex(0)

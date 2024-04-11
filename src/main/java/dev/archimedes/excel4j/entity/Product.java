@@ -1,9 +1,9 @@
-package dev.archimeded.excel4j.entity;
+package dev.archimedes.excel4j.entity;
 
-import dev.archimeded.excel4j.annotations.ExcelCell;
-import dev.archimeded.excel4j.annotations.ExcelSheet;
-import dev.archimeded.excel4j.annotations.HeaderStyle;
-import dev.archimeded.excel4j.enums.FontFamily;
+import dev.archimedes.excel4j.annotations.ExcelCell;
+import dev.archimedes.excel4j.annotations.ExcelSheet;
+import dev.archimedes.excel4j.annotations.HeaderStyle;
+import dev.archimedes.excel4j.enums.FontFamily;
 import lombok.*;
 
 import java.util.ArrayList;
@@ -31,13 +31,17 @@ public class Product {
     private Date date;
 
     @ExcelCell(name = "List", cellNumber = 4)
-    private List<Double> list = new ArrayList<>();
+    private List<String> list = new ArrayList<>();
+
+    @ExcelCell(name = "Quantity", cellNumber = 5)
+    private int quantity;
 
     public Product(Builder builder){
         this.name = builder.name;
         this.category = builder.category;
         this.date = builder.date;
         this.list = builder.list;
+        this.quantity = builder.quantity;
     }
 
     public static Builder builder() {
@@ -50,7 +54,9 @@ public class Product {
 
         private Date date;
 
-        private List<Double> list;
+        private List<String> list;
+
+        private int quantity;
 
         public Product build(){
             return new Product(this);
@@ -71,8 +77,13 @@ public class Product {
             return this;
         }
 
-        public Builder list(List<Double> list){
+        public Builder list(List<String> list){
             this.list = list;
+            return this;
+        }
+
+        public Builder quantity(int quantity){
+            this.quantity = quantity;
             return this;
         }
     }

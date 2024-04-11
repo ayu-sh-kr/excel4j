@@ -1,10 +1,10 @@
-package dev.archimeded.excel4j.service;
+package dev.archimedes.excel4j.service;
 
-import dev.archimeded.excel4j.annotations.HeaderStyle;
-import dev.archimeded.excel4j.options.ExcelOption;
-import dev.archimeded.excel4j.service.contracts.ExcelWriter;
-import dev.archimeded.excel4j.utils.GeneralUtil;
-import dev.archimeded.excel4j.utils.WriterUtils;
+import dev.archimedes.excel4j.annotations.HeaderStyle;
+import dev.archimedes.excel4j.options.ExcelOption;
+import dev.archimedes.excel4j.service.contracts.ExcelWriter;
+import dev.archimedes.excel4j.utils.GeneralUtil;
+import dev.archimedes.excel4j.utils.WriterUtils;
 import lombok.RequiredArgsConstructor;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
