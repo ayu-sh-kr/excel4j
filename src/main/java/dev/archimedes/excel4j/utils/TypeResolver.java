@@ -20,10 +20,9 @@ public class TypeResolver {
         field.set(instance, cell.getStringCellValue());
     }
 
-    public static <T> void resolveNumber(T instance, Field field, Cell cell) throws IllegalAccessException, ParseException {
+    public static <T> Number resolveNumber(T instance, Field field, Cell cell) throws ParseException {
         var parser = NumberFormat.getInstance();
-        var value = parser.parse(String.valueOf(cell.getNumericCellValue()));
-        field.set(instance, value);
+        return parser.parse(String.valueOf(cell.getNumericCellValue()));
     }
 
     public static <T> void resolveBoolean(T instance, Field field, Cell cell) throws IllegalAccessException {
@@ -32,15 +31,17 @@ public class TypeResolver {
 
     public static <T> void resolveInteger(T instance, Field field, Cell cell) {
         try {
-            resolveNumber(instance, field, cell);
-        } catch (ParseException | IllegalAccessException e) {
+            var value = resolveNumber(instance, field, cell);
+            field.set(instance, Integer.parseInt(value.toString()));
+        } catch (IllegalAccessException | ParseException e) {
             throw new RuntimeException(e);
         }
     }
 
     public static <T> void resolveLong(T instance, Field field, Cell cell) {
         try {
-            resolveNumber(instance, field, cell);
+            var value = resolveNumber(instance, field, cell);
+            field.set(instance, value);
         } catch (ParseException | IllegalAccessException e) {
             throw new RuntimeException(e);
         }
@@ -48,7 +49,8 @@ public class TypeResolver {
 
     public static <T> void resolveFloat(T instance, Field field, Cell cell) {
         try {
-            resolveNumber(instance, field, cell);
+            var value = resolveNumber(instance, field, cell);
+            field.set(instance, Float.parseFloat(value.toString()));
         } catch (ParseException | IllegalAccessException e) {
             throw new RuntimeException(e);
         }
@@ -56,7 +58,8 @@ public class TypeResolver {
 
     public static <T> void resolveDouble(T instance, Field field, Cell cell) {
         try {
-            resolveNumber(instance, field, cell);
+            var value = resolveNumber(instance, field, cell);
+            field.set(instance, Double.parseDouble(value.toString()));
         } catch (ParseException | IllegalAccessException e) {
             throw new RuntimeException(e);
         }
