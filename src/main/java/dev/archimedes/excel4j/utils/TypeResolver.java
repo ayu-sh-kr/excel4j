@@ -20,7 +20,7 @@ public class TypeResolver {
         field.set(instance, cell.getStringCellValue());
     }
 
-    public static <T> Number resolveNumber(T instance, Field field, Cell cell) throws ParseException {
+    public static Number resolveNumber(Cell cell) throws ParseException {
         var parser = NumberFormat.getInstance();
         return parser.parse(String.valueOf(cell.getNumericCellValue()));
     }
@@ -31,7 +31,7 @@ public class TypeResolver {
 
     public static <T> void resolveInteger(T instance, Field field, Cell cell) {
         try {
-            var value = resolveNumber(instance, field, cell);
+            var value = resolveNumber(cell);
             field.set(instance, Integer.parseInt(value.toString()));
         } catch (IllegalAccessException | ParseException e) {
             throw new RuntimeException(e);
@@ -40,7 +40,7 @@ public class TypeResolver {
 
     public static <T> void resolveLong(T instance, Field field, Cell cell) {
         try {
-            var value = resolveNumber(instance, field, cell);
+            var value = resolveNumber(cell);
             field.set(instance, value);
         } catch (ParseException | IllegalAccessException e) {
             throw new RuntimeException(e);
@@ -49,7 +49,7 @@ public class TypeResolver {
 
     public static <T> void resolveFloat(T instance, Field field, Cell cell) {
         try {
-            var value = resolveNumber(instance, field, cell);
+            var value = resolveNumber(cell);
             field.set(instance, Float.parseFloat(value.toString()));
         } catch (ParseException | IllegalAccessException e) {
             throw new RuntimeException(e);
@@ -58,7 +58,7 @@ public class TypeResolver {
 
     public static <T> void resolveDouble(T instance, Field field, Cell cell) {
         try {
-            var value = resolveNumber(instance, field, cell);
+            var value = resolveNumber(cell);
             field.set(instance, Double.parseDouble(value.toString()));
         } catch (ParseException | IllegalAccessException e) {
             throw new RuntimeException(e);
