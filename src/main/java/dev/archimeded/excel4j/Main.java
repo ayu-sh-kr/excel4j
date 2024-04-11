@@ -1,9 +1,9 @@
 package dev.archimeded.excel4j;
 
 import dev.archimeded.excel4j.entity.Product;
-import dev.archimeded.excel4j.service.ExcelOption;
-import dev.archimeded.excel4j.service.ExcelOption.ExcelOptionBuilder;
-import dev.archimeded.excel4j.service.ExcelProcessor;
+import dev.archimeded.excel4j.options.ExcelOption;
+import dev.archimeded.excel4j.options.ExcelOption.ExcelOptionBuilder;
+import dev.archimeded.excel4j.processors.ExcelProcessor;
 import dev.archimeded.excel4j.service.contracts.ExcelReader;
 import dev.archimeded.excel4j.service.contracts.ExcelWriter;
 
