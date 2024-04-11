@@ -1,8 +1,9 @@
 package dev.archimeded.excel4j.service;
 
+import dev.archimeded.excel4j.options.ExcelOption;
 import dev.archimeded.excel4j.service.contracts.ExcelReader;
-import dev.archimeded.excel4j.service.utils.GeneralUtil;
-import dev.archimeded.excel4j.service.utils.TypeResolver;
+import dev.archimeded.excel4j.utils.GeneralUtil;
+import dev.archimeded.excel4j.utils.TypeResolver;
 import lombok.RequiredArgsConstructor;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
@@ -60,11 +61,18 @@ public class ExcelReaderService<T> implements ExcelReader<T> {
 
                     Cell cell = row.getCell(cellIndex);
 
-                    switch (cell.getCellType()) {
-                        case STRING -> TypeResolver.resolveString(instance, field, cell, option.getListDelimiter());
-                        case NUMERIC -> TypeResolver.resolveNumber(instance, field, cell, option.getListDelimiter());
-                        case BOOLEAN -> TypeResolver.resolveBoolean(instance, field, cell);
+                    switch (field.getType().getSimpleName()) {
+                        case "Integer", "int" -> TypeResolver.resolveInteger(instance, field, cell);
+                        case "Long", "long" -> TypeResolver.resolveLong(instance, field, cell);
+                        case "float", "Float" -> TypeResolver.resolveFloat(instance, field, cell);
+                        case "double", "Double" -> TypeResolver.resolveDouble(instance, field, cell);
+                        case "bool", "Boolean" -> TypeResolver.resolveBoolean(instance, field, cell);
+                        case "String" -> TypeResolver.resolveString(instance, field, cell);
+                        case "List" -> TypeResolver.resolveList(instance, field, cell, option);
+                        case "Date" -> TypeResolver.resolveDate(instance, field, cell, option);
+                        case "LocalDate" -> TypeResolver.resolveLocalDate(instance, field, cell, option);
                     }
+
                 }
                 resultList.add(instance);
             }
