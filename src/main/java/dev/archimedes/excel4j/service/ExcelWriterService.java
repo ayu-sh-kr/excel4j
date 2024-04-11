@@ -69,7 +69,7 @@ public class ExcelWriterService<T> implements ExcelWriter<T> {
                     switch (field.getType().getSimpleName()) {
                         case "Integer", "Float", "Double", "int", "float", "double" -> {
                             Cell cell = row.createCell(idx, CellType.NUMERIC);
-                            cell.setCellValue((double)field.get(data));
+                            cell.setCellValue(Double.parseDouble(field.get(data).toString()));
                         }
 
                         case "Boolean", "boolean" -> {
