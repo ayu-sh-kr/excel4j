@@ -11,6 +11,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import java.io.*;
 import java.lang.reflect.Field;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
@@ -19,24 +20,21 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class ExcelWriterService<T> implements ExcelWriter<T> {
 
-    private final ExcelOption<T> option;
-
     private static final int CHARACTER_WIDTH = 256;
-
     private static final int DEFAULT_CELL_PADDING = 5;
-
+    private final ExcelOption<T> option;
 
     @Override
     public File write(File file, List<T> ts, int start, int end, boolean overwrite) {
 
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
 
-        try (FileOutputStream fileOutputStream = new FileOutputStream(file)){
-            OutputStream fileStream =  write(byteArrayOutputStream, ts, start, end, overwrite);
+        try (FileOutputStream fileOutputStream = new FileOutputStream(file)) {
+            OutputStream fileStream = write(byteArrayOutputStream, ts, start, end, overwrite);
             if (!(fileStream instanceof ByteArrayOutputStream)) {
                 throw new IllegalArgumentException("The OutputStream should be an instance of ByteArrayOutputStream");
             }
-            byte[] data =  ((ByteArrayOutputStream) fileStream).toByteArray();
+            byte[] data = ((ByteArrayOutputStream) fileStream).toByteArray();
             fileOutputStream.write(data);
             return file;
 
@@ -47,7 +45,7 @@ public class ExcelWriterService<T> implements ExcelWriter<T> {
 
     @Override
     public OutputStream write(ByteArrayOutputStream outputStream, List<T> ts, int start, int end, boolean overwrite) {
-        try (Workbook workbook = new XSSFWorkbook()){
+        try (Workbook workbook = new XSSFWorkbook()) {
             Sheet sheet = workbook.createSheet("Sheet 1");
             Row header = sheet.createRow(0);
 
@@ -55,13 +53,13 @@ public class ExcelWriterService<T> implements ExcelWriter<T> {
 
             var map = GeneralUtil.getCellMap(option.getClazz());
 
-            for (int i = 0; i < end; i++){
+            for (int i = 0; i < end; i++) {
 
                 Row row = sheet.createRow(i + start);
 
                 var data = ts.get(i);
 
-                for(Map.Entry<Integer, Field> entry: map.entrySet()){
+                for (Map.Entry<Integer, Field> entry : map.entrySet()) {
                     int idx = entry.getKey();
                     Field field = entry.getValue();
 
@@ -74,22 +72,36 @@ public class ExcelWriterService<T> implements ExcelWriter<T> {
 
                         case "Boolean", "boolean" -> {
                             Cell cell = row.createCell(idx, CellType.BOOLEAN);
-                            cell.setCellValue((boolean)field.get(data));
+                            cell.setCellValue((boolean) field.get(data));
                         }
 
                         case "Date" -> {
                             Cell cell = row.createCell(idx, CellType.NUMERIC);
-                            cell.setCellValue((Date) field.get(data));
+                            Date date = (Date) field.get(data);
+                            if (null != date) {
+                                cell.setCellValue(date.toString());
+                            }
                         }
 
                         case "LocalDateTime" -> {
                             Cell cell = row.createCell(idx, CellType.NUMERIC);
-                            cell.setCellValue((LocalDateTime) field.get(data));
+                            LocalDateTime dateTime = (LocalDateTime) field.get(data);
+                            if(null != dateTime){
+                                cell.setCellValue(dateTime.toString());
+                            }
                         }
 
                         case "List" -> {
                             Cell cell = row.createCell(idx, CellType.STRING);
                             WriterUtils.writeList(cell, field.get(data), option.getListDelimiter());
+                        }
+
+                        case "LocalDate" -> {
+                            Cell cell = row.createCell(idx, CellType.NUMERIC);
+                            LocalDate date = (LocalDate) field.get(data);
+                            if (null != date) {
+                                cell.setCellValue(((LocalDate) field.get(data)).toString());
+                            }
                         }
 
                         default -> {
@@ -102,28 +114,28 @@ public class ExcelWriterService<T> implements ExcelWriter<T> {
 
             workbook.write(outputStream);
 
-        }catch (Exception e){
+        } catch (Exception e) {
             throw new RuntimeException(e.getLocalizedMessage(), e.getCause());
         }
         return outputStream;
     }
 
 
-    private void createHeaderRow(Row row, Class<T> clazz, Workbook workbook, Sheet sheet){
+    private void createHeaderRow(Row row, Class<T> clazz, Workbook workbook, Sheet sheet) {
 
         var map = GeneralUtil.getColumnMap(clazz);
 
         CellStyle cellStyle;
 
-        if(clazz.isAnnotationPresent(HeaderStyle.class)){
+        if (clazz.isAnnotationPresent(HeaderStyle.class)) {
             HeaderStyle headerStyle = clazz.getAnnotation(HeaderStyle.class);
             cellStyle = getCellStyle(headerStyle, false, workbook);
-        }else {
+        } else {
             cellStyle = getCellStyle(null, true, workbook);
         }
 
 
-        for (Map.Entry<Integer, String> entry: map.entrySet()){
+        for (Map.Entry<Integer, String> entry : map.entrySet()) {
             int idx = entry.getKey();
             String name = entry.getValue();
             Cell cell = row.createCell(idx, CellType.STRING);
@@ -136,12 +148,12 @@ public class ExcelWriterService<T> implements ExcelWriter<T> {
     }
 
 
-    private CellStyle getCellStyle(HeaderStyle headerStyle, boolean basic, Workbook workbook){
+    private CellStyle getCellStyle(HeaderStyle headerStyle, boolean basic, Workbook workbook) {
 
         CellStyle cellStyle = workbook.createCellStyle();
         Font font = workbook.createFont();
 
-        if(basic) {
+        if (basic) {
             font.setFontHeightInPoints((short) 14);
             font.setFontName("Arial");
             font.setBold(true);
@@ -151,7 +163,7 @@ public class ExcelWriterService<T> implements ExcelWriter<T> {
             cellStyle.setAlignment(HorizontalAlignment.LEFT);
             cellStyle.setIndention((short) 1);
             cellStyle.setWrapText(false);
-        }else {
+        } else {
             font.setFontName(headerStyle.font().getValue());
             font.setFontHeightInPoints((short) headerStyle.fontHeight());
             font.setBold(true);
