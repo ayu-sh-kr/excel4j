@@ -6,7 +6,7 @@
 
     <groupId>dev.archimedes</groupId>
     <artifactId>excel4j</artifactId>
-    <version>0.0.1</version>
+    <version>0.0.1-preview</version>
 
     <properties>
         <apache.poi.version>5.2.5</apache.poi.version>
