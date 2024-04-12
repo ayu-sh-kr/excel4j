@@ -15,7 +15,7 @@ public class ReadTest {
 
         ExcelOption<Product> option = ExcelOption.<Product>builder()
                 .with(Product.class)
-                .start(0)
+                .start(1)
                 .dateRegex("dd/MM/yyyy")
                 .listDelimiter(";")
                 .sheetIndex(0)
@@ -25,6 +25,6 @@ public class ReadTest {
 
         List<Product> products = reader.read(new File("Book1.xlsx"));
 
-        assertEquals(4, products.size(), "Products size should be 4");
+        assertEquals(3, products.size(), "Products size should be 4");
     }
 }
