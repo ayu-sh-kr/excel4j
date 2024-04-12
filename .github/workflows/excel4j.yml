@@ -1,4 +1,4 @@
-name: Publish artifacts to Github Packages
+name: Excel4J Preview Package
 on: release
 jobs:
   publish:
