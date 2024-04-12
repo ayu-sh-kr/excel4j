@@ -1,4 +1,4 @@
-package dev.archimedes.excel4j.entity;
+package entities;
 
 import dev.archimedes.excel4j.annotations.ExcelCell;
 import dev.archimedes.excel4j.annotations.ExcelSheet;
