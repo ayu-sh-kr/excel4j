@@ -41,3 +41,6 @@ build/
 !/src/main/java/dev/archimedes/excel4j/Main.java
 !/src/main/java/dev/archimedes/excel4j/entity/Employee.java
 !/src/main/java/dev/archimedes/excel4j/entity/
+TimeCard.xlsx
+src/main/java/dev/archimedes/excel4j/Main.java
+src/main/java/dev/archimedes/excel4j/entity/Employee.java
