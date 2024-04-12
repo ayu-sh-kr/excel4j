@@ -69,7 +69,7 @@ public class ExcelReaderService<T> implements ExcelReader<T> {
                         case "bool", "Boolean" -> TypeResolver.resolveBoolean(instance, field, cell);
                         case "String" -> TypeResolver.resolveString(instance, field, cell);
                         case "List" -> TypeResolver.resolveList(instance, field, cell, option);
-                        case "Date" -> TypeResolver.resolveDate(instance, field, cell, option);
+                        case "Date" -> TypeResolver.resolveDate(instance, field, cell, rowIdx, option);
                         case "LocalDate" -> TypeResolver.resolveLocalDate(instance, field, cell, option);
                     }
 
@@ -81,7 +81,7 @@ public class ExcelReaderService<T> implements ExcelReader<T> {
 
         } catch (IOException | NoSuchMethodException | IllegalAccessException | InstantiationException |
                  InvocationTargetException | ParseException | ClassCastException e) {
-            throw new RuntimeException(e.getLocalizedMessage(), e.getCause());
+            throw new RuntimeException(e.getMessage(), e.getCause());
         }
     }
 }
