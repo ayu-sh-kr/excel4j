@@ -1,8 +1,12 @@
 package dev.archimedes.excel4j.options;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-@Getter @Setter
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 public class ExcelOption<T> {
@@ -23,8 +27,10 @@ public class ExcelOption<T> {
 
     private String dateTimeRegex;
 
+    private boolean overwrite;
 
-    public static <T> ExcelOptionBuilder<T> builder(){
+
+    public static <T> ExcelOptionBuilder<T> builder() {
         return new ExcelOptionBuilder<>();
     }
 
@@ -45,49 +51,64 @@ public class ExcelOption<T> {
 
         private String dateTimeRgx = "dd/MM/yyyy hh:mm:ss";
 
-        public ExcelOptionBuilder<T> with(Class<T> clazz){
+        private boolean overwrite = false;
+
+        public ExcelOptionBuilder<T> with(Class<T> clazz) {
             this.clazz = clazz;
             return this;
         }
 
-        public ExcelOptionBuilder<T> start(int start){
+        public ExcelOptionBuilder<T> start(int start) {
             this.start = start;
             return this;
         }
 
-        public ExcelOptionBuilder<T> end(int end){
+        public ExcelOptionBuilder<T> end(int end) {
             this.end = end;
             return this;
         }
 
-        public ExcelOptionBuilder<T> sheetIndex(int sheetIndex){
+        public ExcelOptionBuilder<T> sheetIndex(int sheetIndex) {
             this.sheetIndex = sheetIndex;
             return this;
         }
 
-        public ExcelOptionBuilder<T> sheetName(String sheetName){
+        public ExcelOptionBuilder<T> sheetName(String sheetName) {
             this.sheetName = sheetName;
             return this;
         }
 
-        public ExcelOptionBuilder<T> dateRegex(String dateRgx){
+        public ExcelOptionBuilder<T> dateRegex(String dateRgx) {
             this.dateRgx = dateRgx;
             return this;
         }
 
-        public ExcelOptionBuilder<T> dateTimeRgx(String dateTimeRgx){
+        public ExcelOptionBuilder<T> dateTimeRgx(String dateTimeRgx) {
             this.dateTimeRgx = dateTimeRgx;
             return this;
         }
 
-        public ExcelOptionBuilder<T> listDelimiter(String delimiter){
+        public ExcelOptionBuilder<T> listDelimiter(String delimiter) {
             this.listDelimiter = delimiter;
             return this;
         }
 
-        public ExcelOption<T> build(){
+        public ExcelOptionBuilder<T> overwrite(boolean isOverwrite){
+            this.overwrite = isOverwrite;
+            return this;
+        }
+
+        public ExcelOption<T> build() {
             return new ExcelOption<>(
-                    clazz, start, end, sheetIndex, sheetName, listDelimiter, dateRgx, dateTimeRgx
+                    clazz,
+                    start,
+                    end,
+                    sheetIndex,
+                    sheetName,
+                    listDelimiter,
+                    dateRgx,
+                    dateTimeRgx,
+                    overwrite
             );
         }
     }
