@@ -2,6 +2,7 @@ package dev.archimedes.excel4j.utils;
 
 import dev.archimedes.excel4j.annotations.ExcelCell;
 import dev.archimedes.excel4j.annotations.ExcelSheet;
+import org.apache.poi.util.StringUtil;
 
 import java.lang.reflect.Field;
 import java.util.*;
@@ -75,5 +76,21 @@ public class GeneralUtil {
             }
         }
         return columnMap;
+    }
+
+    public static <T> String resolveSheetName(Class<T> clazz){
+        ExcelSheet sheet = clazz.getAnnotation(ExcelSheet.class);
+        if(StringUtil.isNotBlank(sheet.name())){
+            return sheet.name();
+        }
+
+        String simpleName = clazz.getSimpleName();
+        String[] words = simpleName.split("(?<=[a-z])(?=[A-Z])");
+
+        for (int i = 0; i < words.length; i++){
+            words[i] = words[i].substring(0, 1).toUpperCase() + words[i].substring(1).toLowerCase();
+        }
+
+        return String.join(" ", words);
     }
 }
