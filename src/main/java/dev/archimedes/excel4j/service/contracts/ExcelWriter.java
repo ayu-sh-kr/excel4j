@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface ExcelWriter<T> {
 
-    File write(File file, List<T> ts, int start, int end, boolean overwrite);
+    File write(File file, List<T> ts);
 
-    OutputStream write(ByteArrayOutputStream outputStream, List<T> ts, int start, int end, boolean overwrite);
+    OutputStream write(ByteArrayOutputStream outputStream, List<T> ts);
 }
