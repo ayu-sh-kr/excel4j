@@ -25,12 +25,12 @@ public class ExcelWriterService<T> implements ExcelWriter<T> {
     private final ExcelOption<T> option;
 
     @Override
-    public File write(File file, List<T> ts, int start, int end, boolean overwrite) {
+    public File write(File file, List<T> ts) {
 
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
 
         try (FileOutputStream fileOutputStream = new FileOutputStream(file)) {
-            OutputStream fileStream = write(byteArrayOutputStream, ts, start, end, overwrite);
+            OutputStream fileStream = write(byteArrayOutputStream, ts);
             if (!(fileStream instanceof ByteArrayOutputStream)) {
                 throw new IllegalArgumentException("The OutputStream should be an instance of ByteArrayOutputStream");
             }
@@ -44,16 +44,34 @@ public class ExcelWriterService<T> implements ExcelWriter<T> {
     }
 
     @Override
-    public OutputStream write(ByteArrayOutputStream outputStream, List<T> ts, int start, int end, boolean overwrite) {
+    public OutputStream write(ByteArrayOutputStream outputStream, List<T> ts) {
         try (Workbook workbook = new XSSFWorkbook()) {
-            Sheet sheet = workbook.createSheet("Sheet 1");
-            Row header = sheet.createRow(0);
 
-            createHeaderRow(header, option.getClazz(), workbook, sheet);
+            String sheetName = GeneralUtil.resolveSheetName(option.getClazz());
+
+            Sheet sheet;
+
+            if (option.isOverwrite()){
+
+                sheet = workbook.createSheet(sheetName);
+
+                Row header = sheet.createRow(0);
+                createHeaderRow(header, option.getClazz(), workbook, sheet);
+
+            }else {
+                sheet = workbook.getSheetAt(option.getSheetIndex());
+            }
+
 
             var map = GeneralUtil.getCellMap(option.getClazz());
 
-            for (int i = 0; i < end; i++) {
+            int start = option.isOverwrite() ? 1 : option.getStart() == 1 ? sheet.getLastRowNum() + 1 : option.getStart();
+
+            int end = option.isOverwrite() ? start + ts.size() : option.getEnd() == -1 ? start + ts.size() : option.getEnd();
+
+
+
+            for (int i = 0; i < ts.size(); i++) {
 
                 Row row = sheet.createRow(i + start);
 
@@ -79,7 +97,7 @@ public class ExcelWriterService<T> implements ExcelWriter<T> {
                             Cell cell = row.createCell(idx, CellType.NUMERIC);
                             Date date = (Date) field.get(data);
                             if (null != date) {
-                                cell.setCellValue(date.toString());
+                                cell.setCellValue(date);
                             }
                         }
 
