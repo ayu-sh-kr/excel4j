@@ -88,7 +88,7 @@ public class TypeResolver {
                                         .toList()
                 );
 
-                case "java.lang.String" -> field.set(instance, Arrays.stream(cell.getStringCellValue().split(option.getListDelimiter())).toList());
+                case "java.lang.String" -> field.set(instance, Arrays.stream(cell.getStringCellValue().split(option.getListDelimiter())).map(String::trim).toList());
                 case "java.util.Date" -> field.set(
                         instance, Arrays.stream(cell.getStringCellValue().split(option.getListDelimiter()))
                                         .map(value -> {
