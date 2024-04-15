@@ -12,6 +12,7 @@ import java.util.Date;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class WriteTest {
 
@@ -59,7 +60,7 @@ public class WriteTest {
         ExcelWriter<Product> writer = ExcelProcessor.getWriterFromOption(option);
         ExcelReader<Product> reader = ExcelProcessor.getReaderFromOption(option);
 
-        File file = new File("ProductTest.xlsx");
+        File file = new File("product_test.xlsx");
 
         if (!file.exists()) {
             boolean result = file.createNewFile();
@@ -69,11 +70,7 @@ public class WriteTest {
         writer.write(file, products);
         List<Product> products1 = reader.read(file);
 
-        assertEquals(products1.size(), products.size(), "Size of both product list should be equal");
-
-        boolean result = file.delete();
-
-        System.out.println("File deleted: " + result);
+        assertEquals(products.size(), products1.size(), "Size of both product list should be equal");
     }
 
     @Test
@@ -89,16 +86,14 @@ public class WriteTest {
         ExcelWriter<Product> writer = ExcelProcessor.getWriterFromOption(option);
         ExcelReader<Product> reader = ExcelProcessor.getReaderFromOption(option);
 
-        File file = new File("ProductTest.xlsx");
+        File file = new File("product_test.xlsx");
+
+        System.out.println("File exists: " + file.exists());
 
         if (!file.exists()) {
             boolean result = file.createNewFile();
             System.out.println("File created: " + result);
         }
-
-        writer.write(file, products);
-
-//        assertEquals(products.size(), reader.read(file).size(), "Size of both product list should be equal");
 
         products.addAll(getProducts());
 
@@ -108,6 +103,53 @@ public class WriteTest {
         List<Product> products1 = reader.read(file);
 
         assertEquals(products.size(), products1.size(), "Size of both product list should be equal");
+
+        boolean result = file.delete();
+
+        System.out.println("File deleted: " + result);
+    }
+
+    @Test
+    public void writeInBetween() throws IOException {
+
+        ExcelOption<Product> option = ExcelOption.<Product>builder()
+                .with(Product.class)
+                .sheetIndex(0)
+                .overwrite(true)
+                .listDelimiter(",")
+                .build();
+        List<Product> products = getProducts();
+
+        File file = new File("product_test.xlsx");
+
+        if(!file.exists()){
+            boolean result = file.createNewFile();
+            System.out.println("File created: " + result);
+        }
+
+        ExcelWriter<Product> writer = ExcelProcessor.getWriterFromOption(option);
+        ExcelReader<Product> reader = ExcelProcessor.getReaderFromOption(option);
+        writer.write(file, products);
+
+        assertEquals(products.size(), reader.read(file).size(), "Product size and Size of read should be equal");
+
+        Product product = Product.builder()
+                .name("Apple Pie").category("Cake").quantity(3).date(new Date()).list(List.of("Honey", "Apple", "Corn flower"))
+                .build();
+
+        option.setOverwrite(false);
+        option.setStart(2);
+        option.setEnd(3);
+        writer.write(file, List.of(product));
+
+        option.setStart(1);
+
+        Product product1 = reader.read(file).get(1);
+        boolean test = product.equals(product1);
+        System.out.println(product);
+        System.out.println(product1);
+        assertTrue(test, "It should be true");
+//        assertEquals(product, product1, "Product at index 1 should be equal");
 
         boolean result = file.delete();
 
