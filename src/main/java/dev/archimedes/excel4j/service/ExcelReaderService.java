@@ -3,10 +3,13 @@ package dev.archimedes.excel4j.service;
 import dev.archimedes.excel4j.options.ExcelOption;
 import dev.archimedes.excel4j.service.contracts.ExcelReader;
 import dev.archimedes.excel4j.utils.GeneralUtil;
-import dev.archimedes.excel4j.utils.TypeResolver;
+import dev.archimedes.excel4j.utils.ReaderUtils;
 import lombok.RequiredArgsConstructor;
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
@@ -61,17 +64,7 @@ public class ExcelReaderService<T> implements ExcelReader<T> {
 
                     Cell cell = row.getCell(cellIndex);
 
-                    switch (field.getType().getSimpleName()) {
-                        case "Integer", "int" -> TypeResolver.resolveInteger(instance, field, cell);
-                        case "Long", "long" -> TypeResolver.resolveLong(instance, field, cell);
-                        case "float", "Float" -> TypeResolver.resolveFloat(instance, field, cell);
-                        case "double", "Double" -> TypeResolver.resolveDouble(instance, field, cell);
-                        case "bool", "Boolean" -> TypeResolver.resolveBoolean(instance, field, cell);
-                        case "String" -> TypeResolver.resolveString(instance, field, cell);
-                        case "List" -> TypeResolver.resolveList(instance, field, cell, option);
-                        case "Date" -> TypeResolver.resolveDate(instance, field, cell, rowIdx, option);
-                        case "LocalDate" -> TypeResolver.resolveLocalDate(instance, field, cell, option);
-                    }
+                    ReaderUtils.read(rowIdx, field, cell, option, instance);
 
                 }
                 resultList.add(instance);
@@ -82,6 +75,36 @@ public class ExcelReaderService<T> implements ExcelReader<T> {
         } catch (IOException | NoSuchMethodException | IllegalAccessException | InstantiationException |
                  InvocationTargetException | ParseException | ClassCastException e) {
             throw new RuntimeException(e.getMessage(), e.getCause());
+        }
+    }
+
+    public T readOne(File file){
+
+        try (Workbook workbook = new XSSFWorkbook(file)){
+
+            Sheet sheet = workbook.getSheetAt(option.getSheetIndex());
+
+            Row row = sheet.getRow(option.getStart());
+
+            T instance = option.getClazz().getConstructor().newInstance();
+
+            var map = GeneralUtil.getCellMap(option.getClazz());
+
+            for (Map.Entry<Integer, Field> entry: map.entrySet()){
+                int cellIndex = entry.getKey();
+
+                Field field = entry.getValue();
+
+                Cell cell = row.getCell(cellIndex);
+
+                ReaderUtils.read(option.getStart(), field, cell, option, instance);
+            }
+
+            return instance;
+
+        } catch (IOException | InvalidFormatException | InvocationTargetException | NoSuchMethodException |
+                 IllegalAccessException | InstantiationException | ParseException e) {
+            throw new RuntimeException(e);
         }
     }
 }
