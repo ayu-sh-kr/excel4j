@@ -11,4 +11,5 @@ public interface ExcelReader<T> {
 
     List<T> read(InputStream inputStream);
 
+    T readOne(File file);
 }
