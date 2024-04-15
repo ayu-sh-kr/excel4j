@@ -9,6 +9,7 @@ import lombok.*;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -42,6 +43,24 @@ public class Product {
         this.date = builder.date;
         this.list = builder.list;
         this.quantity = builder.quantity;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Product product = (Product) o;
+        return Double.compare(product.price, price) == 0 &&
+               quantity == product.quantity &&
+               Objects.equals(name, product.name) &&
+               Objects.equals(category, product.category) &&
+               Objects.equals(date, product.date) &&
+               Objects.equals(list, product.list);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, category, price, date, list, quantity);
     }
 
     public static Builder builder() {
