@@ -6,15 +6,13 @@
 
     <groupId>dev.archimedes</groupId>
     <artifactId>excel4j</artifactId>
-    <version>0.0.2-SNAPSHOT</version>
+    <version>0.0.3-SNAPSHOT</version>
     <packaging>jar</packaging>
-
-    <name>excel4j-preview</name>
-    <url>http://maven.apache.org</url>
 
     <properties>
         <apache.poi.version>5.2.5</apache.poi.version>
         <junit.version>5.10.2</junit.version>
+        <apache.log4j.version>2.21.1</apache.log4j.version>
         <lombok.version>1.18.30</lombok.version>
         <maven.compiler.source>21</maven.compiler.source>
         <maven.compiler.target>21</maven.compiler.target>
@@ -41,6 +39,12 @@
             <artifactId>junit-jupiter</artifactId>
             <version>${junit.version}</version>
             <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-core</artifactId>
+            <version>${apache.log4j.version}</version> <!-- Use the version that is compatible with your project -->
         </dependency>
 
     </dependencies>
