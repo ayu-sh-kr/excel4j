@@ -11,6 +11,8 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import java.io.*;
 import java.lang.reflect.Field;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Date;
@@ -27,48 +29,70 @@ public class ExcelWriterService<T> implements ExcelWriter<T> {
     @Override
     public File write(File file, List<T> ts) {
 
-        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        File temporary;
+        try {
+            temporary = File.createTempFile("temporary", ".xlsx");
+            Files.copy(file.toPath(), temporary.toPath(), StandardCopyOption.REPLACE_EXISTING);
+        } catch (IOException e) {
+            throw new RuntimeException("Error creating copy of the file: " + e.getLocalizedMessage(), e.getCause());
+        }
 
-        try (FileOutputStream fileOutputStream = new FileOutputStream(file)) {
-            OutputStream fileStream = write(byteArrayOutputStream, ts);
-            if (!(fileStream instanceof ByteArrayOutputStream)) {
-                throw new IllegalArgumentException("The OutputStream should be an instance of ByteArrayOutputStream");
+        try (ByteArrayInputStream fileInputStream = new ByteArrayInputStream(Files.readAllBytes(temporary.toPath()));
+             FileOutputStream fileOutputStream = new FileOutputStream(temporary)
+        ) {
+            ByteArrayOutputStream outputStream;
+
+            if(option.isOverwrite()){
+                outputStream = (ByteArrayOutputStream) write(new ByteArrayInputStream(new byte[0]), ts);
             }
-            byte[] data = ((ByteArrayOutputStream) fileStream).toByteArray();
-            fileOutputStream.write(data);
-            return file;
+            else {
+                outputStream = (ByteArrayOutputStream) write(fileInputStream, ts);
+            }
 
+            fileOutputStream.write(outputStream.toByteArray());
+            outputStream.flush();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+
+        boolean delete = file.delete();
+        boolean rename = temporary.renameTo(file);
+
+
+        if(!delete || !rename) {
+            throw new RuntimeException("Failed to replace original file with new file");
+        }
+        return temporary;
     }
 
     @Override
-    public OutputStream write(ByteArrayOutputStream outputStream, List<T> ts) {
-        try (Workbook workbook = new XSSFWorkbook()) {
+    public OutputStream write(InputStream inputStream, List<T> ts) {
+        ByteArrayInputStream byteArrayInputStream = (ByteArrayInputStream) inputStream;
+        byte[] bytes = byteArrayInputStream.readAllBytes();
+
+        try (Workbook workbook = bytes.length > 0 ? new XSSFWorkbook(new ByteArrayInputStream(bytes)) : new XSSFWorkbook()) {
 
             String sheetName = GeneralUtil.resolveSheetName(option.getClazz());
 
             Sheet sheet;
 
-            if (option.isOverwrite()){
+            if (option.isOverwrite()) {
 
                 sheet = workbook.createSheet(sheetName);
 
                 Row header = sheet.createRow(0);
                 createHeaderRow(header, option.getClazz(), workbook, sheet);
 
-            }else {
+            } else {
                 sheet = workbook.getSheetAt(option.getSheetIndex());
             }
 
 
             var map = GeneralUtil.getCellMap(option.getClazz());
 
-            int start = option.isOverwrite() ? 1 : option.getStart() == 1 ? sheet.getLastRowNum() + 1 : option.getStart();
+            int start = option.isOverwrite() ? 1 : option.getStart();
 
             int end = option.isOverwrite() ? start + ts.size() : option.getEnd() == -1 ? start + ts.size() : option.getEnd();
-
 
 
             for (int i = 0; i < ts.size(); i++) {
@@ -104,7 +128,7 @@ public class ExcelWriterService<T> implements ExcelWriter<T> {
                         case "LocalDateTime" -> {
                             Cell cell = row.createCell(idx, CellType.NUMERIC);
                             LocalDateTime dateTime = (LocalDateTime) field.get(data);
-                            if(null != dateTime){
+                            if (null != dateTime) {
                                 cell.setCellValue(dateTime.toString());
                             }
                         }
@@ -130,12 +154,13 @@ public class ExcelWriterService<T> implements ExcelWriter<T> {
                 }
             }
 
+            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
             workbook.write(outputStream);
+            return outputStream;
 
         } catch (Exception e) {
             throw new RuntimeException(e.getLocalizedMessage(), e.getCause());
         }
-        return outputStream;
     }
 
 
