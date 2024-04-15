@@ -9,6 +9,7 @@ import java.util.*;
 
 public class GeneralUtil {
 
+    @SuppressWarnings("unused")
     public static <T> Set<String> resolveColumnsName(Class<T> clazz){
 
         if(!clazz.isAnnotationPresent(ExcelSheet.class)){
