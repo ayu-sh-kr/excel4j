@@ -148,8 +148,42 @@ public class WriteTest {
         boolean test = product.equals(product1);
         System.out.println(product);
         System.out.println(product1);
+
         assertTrue(test, "It should be true");
-//        assertEquals(product, product1, "Product at index 1 should be equal");
+
+        boolean result = file.delete();
+
+        System.out.println("File deleted: " + result);
+    }
+
+    @Test
+    public void writeOne() throws IOException {
+        Product product = Product.builder()
+                .name("Apple Pie").category("Cake").quantity(3).date(new Date()).list(List.of("Honey", "Apple", "Corn flower"))
+                .build();
+
+        File file = new File("product_test.xlsx");
+
+        if(!file.exists()){
+            boolean result = file.createNewFile();
+            System.out.println("File created: " + result);
+        }
+
+        ExcelOption<Product> option = ExcelOption.<Product>builder()
+                .start(1)
+                .listDelimiter(";")
+                .overwrite(true)
+                .with(Product.class)
+                .build();
+
+        ExcelWriter<Product> writer = ExcelProcessor.getWriterFromOption(option);
+        ExcelReader<Product> reader = ExcelProcessor.getReaderFromOption(option);
+
+        writer.write(file, product);
+
+        Product product1 = reader.readOne(file);
+
+        assertEquals(product, product1, "Both products should be equal");
 
         boolean result = file.delete();
 
