@@ -1,29 +1,27 @@
 package dev.archimedes.excel4j.service;
 
-import dev.archimedes.excel4j.annotations.HeaderStyle;
 import dev.archimedes.excel4j.options.ExcelOption;
 import dev.archimedes.excel4j.service.contracts.ExcelWriter;
 import dev.archimedes.excel4j.utils.GeneralUtil;
 import dev.archimedes.excel4j.utils.WriterUtils;
 import lombok.RequiredArgsConstructor;
-import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import java.io.*;
 import java.lang.reflect.Field;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
 @RequiredArgsConstructor
 public class ExcelWriterService<T> implements ExcelWriter<T> {
 
-    private static final int CHARACTER_WIDTH = 256;
-    private static final int DEFAULT_CELL_PADDING = 5;
+
     private final ExcelOption<T> option;
 
     @Override
@@ -81,19 +79,15 @@ public class ExcelWriterService<T> implements ExcelWriter<T> {
                 sheet = workbook.createSheet(sheetName);
 
                 Row header = sheet.createRow(0);
-                createHeaderRow(header, option.getClazz(), workbook, sheet);
+                WriterUtils.createHeaderRow(header, option.getClazz(), workbook, sheet);
 
             } else {
                 sheet = workbook.getSheetAt(option.getSheetIndex());
             }
 
-
             var map = GeneralUtil.getCellMap(option.getClazz());
 
             int start = option.isOverwrite() ? 1 : option.getStart();
-
-            int end = option.isOverwrite() ? start + ts.size() : option.getEnd() == -1 ? start + ts.size() : option.getEnd();
-
 
             for (int i = 0; i < ts.size(); i++) {
 
@@ -104,53 +98,7 @@ public class ExcelWriterService<T> implements ExcelWriter<T> {
                 for (Map.Entry<Integer, Field> entry : map.entrySet()) {
                     int idx = entry.getKey();
                     Field field = entry.getValue();
-
-
-                    switch (field.getType().getSimpleName()) {
-                        case "Integer", "Float", "Double", "int", "float", "double" -> {
-                            Cell cell = row.createCell(idx, CellType.NUMERIC);
-                            cell.setCellValue(Double.parseDouble(field.get(data).toString()));
-                        }
-
-                        case "Boolean", "boolean" -> {
-                            Cell cell = row.createCell(idx, CellType.BOOLEAN);
-                            cell.setCellValue((boolean) field.get(data));
-                        }
-
-                        case "Date" -> {
-                            Cell cell = row.createCell(idx, CellType.NUMERIC);
-                            Date date = (Date) field.get(data);
-                            if (null != date) {
-                                cell.setCellValue(date);
-                            }
-                        }
-
-                        case "LocalDateTime" -> {
-                            Cell cell = row.createCell(idx, CellType.NUMERIC);
-                            LocalDateTime dateTime = (LocalDateTime) field.get(data);
-                            if (null != dateTime) {
-                                cell.setCellValue(dateTime.toString());
-                            }
-                        }
-
-                        case "List" -> {
-                            Cell cell = row.createCell(idx, CellType.STRING);
-                            WriterUtils.writeList(cell, field.get(data), option.getListDelimiter());
-                        }
-
-                        case "LocalDate" -> {
-                            Cell cell = row.createCell(idx, CellType.NUMERIC);
-                            LocalDate date = (LocalDate) field.get(data);
-                            if (null != date) {
-                                cell.setCellValue(((LocalDate) field.get(data)).toString());
-                            }
-                        }
-
-                        default -> {
-                            Cell cell = row.createCell(idx, CellType.STRING);
-                            cell.setCellValue((String) field.get(data));
-                        }
-                    }
+                    WriterUtils.write(field, row, data, idx, option);
                 }
             }
 
@@ -163,61 +111,40 @@ public class ExcelWriterService<T> implements ExcelWriter<T> {
         }
     }
 
+    @Override
+    public void write(File file, T t) {
 
-    private void createHeaderRow(Row row, Class<T> clazz, Workbook workbook, Sheet sheet) {
+        try (Workbook workbook = option.isOverwrite() ? new XSSFWorkbook() : new XSSFWorkbook(file);
+             FileOutputStream fileOutputStream = new FileOutputStream(file)
+        ){
 
-        var map = GeneralUtil.getColumnMap(clazz);
+            Sheet sheet;
+            if (option.isOverwrite()){
+                sheet = workbook.createSheet(GeneralUtil.resolveSheetName(option.getClazz()));
 
-        CellStyle cellStyle;
+                Row row = sheet.createRow(0);
+                WriterUtils.createHeaderRow(row, option.getClazz(), workbook, sheet);
 
-        if (clazz.isAnnotationPresent(HeaderStyle.class)) {
-            HeaderStyle headerStyle = clazz.getAnnotation(HeaderStyle.class);
-            cellStyle = getCellStyle(headerStyle, false, workbook);
-        } else {
-            cellStyle = getCellStyle(null, true, workbook);
+            }
+            else {
+                sheet = workbook.getSheetAt(option.getSheetIndex());
+            }
+
+            Row row = sheet.createRow(option.getStart());
+
+            var map = GeneralUtil.getCellMap(option.getClazz());
+
+            for (Map.Entry<Integer, Field> entry: map.entrySet()){
+                int idx = entry.getKey();
+                Field field = entry.getValue();
+                WriterUtils.write(field, row, t, idx, option);
+            }
+
+            workbook.write(fileOutputStream);
+
+        } catch (IOException | InvalidFormatException | IllegalAccessException e) {
+            throw new RuntimeException(e);
         }
-
-
-        for (Map.Entry<Integer, String> entry : map.entrySet()) {
-            int idx = entry.getKey();
-            String name = entry.getValue();
-            Cell cell = row.createCell(idx, CellType.STRING);
-            cell.setCellValue(name);
-            cell.setCellStyle(cellStyle);
-
-            sheet.setColumnWidth(idx, name.length() * CHARACTER_WIDTH * 2);
-        }
-
-    }
-
-
-    private CellStyle getCellStyle(HeaderStyle headerStyle, boolean basic, Workbook workbook) {
-
-        CellStyle cellStyle = workbook.createCellStyle();
-        Font font = workbook.createFont();
-
-        if (basic) {
-            font.setFontHeightInPoints((short) 14);
-            font.setFontName("Arial");
-            font.setBold(true);
-            font.setColor(IndexedColors.BLACK.getIndex());
-
-            cellStyle.setFont(font);
-            cellStyle.setAlignment(HorizontalAlignment.LEFT);
-            cellStyle.setIndention((short) 1);
-            cellStyle.setWrapText(false);
-        } else {
-            font.setFontName(headerStyle.font().getValue());
-            font.setFontHeightInPoints((short) headerStyle.fontHeight());
-            font.setBold(true);
-            font.setColor(headerStyle.fontColor().getIndex());
-
-            cellStyle.setFont(font);
-            cellStyle.setAlignment(headerStyle.horizontalAlignment());
-            cellStyle.setIndention((short) headerStyle.padding());
-            cellStyle.setWrapText(headerStyle.wrapText());
-        }
-        return cellStyle;
     }
 
 }
