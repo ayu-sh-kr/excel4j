@@ -2,7 +2,7 @@ import entities.Product;
 import dev.archimedes.excel4j.options.ExcelOption;
 import dev.archimedes.excel4j.processors.ExcelProcessor;
 import dev.archimedes.excel4j.service.contracts.ExcelReader;
-import entities.Employee;
+import entities.EmployeeData;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -31,14 +31,14 @@ public class ReadTest {
 
     @Test
     public void readEmployee(){
-        ExcelOption<Employee> option = ExcelOption.<Employee>builder()
+        ExcelOption<EmployeeData> option = ExcelOption.<EmployeeData>builder()
                 .sheetIndex(0)
                 .start(1)
-                .with(Employee.class)
+                .with(EmployeeData.class)
                 .build();
 
-        ExcelReader<Employee> reader = ExcelProcessor.getReaderFromOption(option);
-        List<Employee> employees = reader.read(new File("src/main/resources/Assignment_Timecard.xlsx"));
-        assertEquals(1484, employees.size());
+        ExcelReader<EmployeeData> reader = ExcelProcessor.getReaderFromOption(option);
+        List<EmployeeData> employeeData = reader.read(new File("src/main/resources/Assignment_Timecard.xlsx"));
+        assertEquals(1484, employeeData.size());
     }
 }
