@@ -81,7 +81,7 @@ public class WriterUtils {
 
     public static <T> void createHeaderRow(Row row, Class<T> clazz, Workbook workbook, Sheet sheet) {
 
-        var map = GeneralUtil.getColumnMap(clazz);
+        var map = GeneralUtil.resolveColumnNames(clazz);
 
         CellStyle cellStyle;
 
