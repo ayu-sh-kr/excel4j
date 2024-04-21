@@ -10,7 +10,7 @@ import java.util.*;
 public class GeneralUtil {
 
     @SuppressWarnings("unused")
-    public static <T> Set<String> resolveColumnsName(Class<T> clazz){
+    public static <T> Set<String> getColumnNames(Class<T> clazz){
 
         if(!clazz.isAnnotationPresent(ExcelSheet.class)){
             throw new RuntimeException("Class not annotated with @ExcelSheet");
@@ -59,7 +59,7 @@ public class GeneralUtil {
         return columnMap;
     }
 
-    public static <T> Map<Integer, String> getColumnMap(Class<T> clazz) {
+    public static <T> Map<Integer, String> resolveColumnNames(Class<T> clazz) {
 
         if(!clazz.isAnnotationPresent(ExcelSheet.class)){
             throw new RuntimeException("Class not annotated with @ExcelSheet");
@@ -70,9 +70,19 @@ public class GeneralUtil {
 
         for (Field field: fields){
             if(field.isAnnotationPresent(ExcelCell.class)){
+
+                String name = field.getAnnotation(ExcelCell.class).name();
+
+                if(StringUtil.isBlank(name)){
+                    String[] words = field.getName().split("(?<=[a-z])(?=[A-Z])");
+                    for (int i = 0; i < words.length; i++){
+                        words[i] = words[i].substring(0, 1).toUpperCase() + words[i].substring(1).toLowerCase();
+                    }
+                    name = String.join("", words);
+                }
                 columnMap.put(
                         field.getAnnotation(ExcelCell.class).cellNumber(),
-                        field.getAnnotation(ExcelCell.class).name()
+                        name
                 );
             }
         }
