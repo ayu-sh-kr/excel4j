@@ -20,6 +20,8 @@ public class ReaderUtils {
             case "List" -> TypeResolver.resolveList(instance, field, cell, option);
             case "Date" -> TypeResolver.resolveDate(instance, field, cell, rowIdx, option);
             case "LocalDate" -> TypeResolver.resolveLocalDate(instance, field, cell, option);
+            case "LocalDateTime" -> TypeResolver.resolveLocalDateTime(instance, field, cell, option);
+            case "LocalTime" -> TypeResolver.resolveLocalTime(instance, field, cell, option);
         }
     }
 }
