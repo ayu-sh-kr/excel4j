@@ -27,6 +27,8 @@ public class ExcelOption<T> {
 
     private String dateTimeRegex;
 
+    private String timeRegex;
+
     private boolean overwrite;
 
 
@@ -52,6 +54,8 @@ public class ExcelOption<T> {
         private String dateTimeRgx = "dd/MM/yyyy hh:mm:ss";
 
         private boolean overwrite = false;
+
+        private String timeRgx = "hh:mm:ss";
 
         public ExcelOptionBuilder<T> with(Class<T> clazz) {
             this.clazz = clazz;
@@ -88,6 +92,11 @@ public class ExcelOption<T> {
             return this;
         }
 
+        public ExcelOptionBuilder<T> timeRgx(String timeRgx) {
+            this.timeRgx = timeRgx;
+            return this;
+        }
+
         public ExcelOptionBuilder<T> listDelimiter(String delimiter) {
             this.listDelimiter = delimiter;
             return this;
@@ -108,6 +117,7 @@ public class ExcelOption<T> {
                     listDelimiter,
                     dateRgx,
                     dateTimeRgx,
+                    timeRgx,
                     overwrite
             );
         }
