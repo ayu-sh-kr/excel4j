@@ -6,7 +6,7 @@
 
     <groupId>dev.archimedes</groupId>
     <artifactId>excel4j</artifactId>
-    <version>0.0.3-SNAPSHOT</version>
+    <version>0.0.7-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <properties>
