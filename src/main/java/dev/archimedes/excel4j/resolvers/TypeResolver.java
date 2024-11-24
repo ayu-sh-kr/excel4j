@@ -87,6 +87,12 @@ public class TypeResolver {
     }
 
     public static <T> void resolveList(T instance, Field field, Cell cell, ExcelOption<T> option) throws IllegalAccessException {
+
+        if(StringUtil.isBlank(cell.toString())) {
+            field.set(instance, null);
+            return;
+        }
+
         Type genericType = field.getGenericType();
         if(genericType instanceof ParameterizedType parameterizedType){
             Type actualTypeArgument = parameterizedType.getActualTypeArguments()[0];
