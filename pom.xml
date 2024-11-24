@@ -6,11 +6,11 @@
 
     <groupId>dev.archimedes</groupId>
     <artifactId>excel4j</artifactId>
-    <version>0.0.8-SNAPSHOT</version>
+    <version>0.0.11-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <properties>
-        <apache.poi.version>5.2.5</apache.poi.version>
+        <apache.poi.version>5.3.0</apache.poi.version>
         <junit.version>5.10.2</junit.version>
         <apache.log4j.version>2.21.1</apache.log4j.version>
         <lombok.version>1.18.30</lombok.version>
