@@ -3,6 +3,7 @@ package dev.archimedes.excel4j.resolvers;
 import dev.archimedes.excel4j.enums.DateTypeRegex;
 import dev.archimedes.excel4j.options.ExcelOption;
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.util.StringUtil;
 
 import java.lang.reflect.Field;
@@ -34,7 +35,7 @@ public class TypeResolver {
     }
 
     public static Number resolveNumber(Cell cell) throws ParseException {
-        if (cell == null) {
+        if (cell == null || !cell.getCellType().equals(CellType.NUMERIC)) {
             return null;
         }
         var parser = NumberFormat.getInstance();
