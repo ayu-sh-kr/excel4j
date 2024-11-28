@@ -4,13 +4,13 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>dev.archimedes</groupId>
+    <groupId>io.github.ayu-sh-kr</groupId>
     <artifactId>excel4j</artifactId>
-    <version>0.0.8-SNAPSHOT</version>
+    <version>0.0.3</version>
     <packaging>jar</packaging>
 
     <properties>
-        <apache.poi.version>5.2.5</apache.poi.version>
+        <apache.poi.version>5.3.0</apache.poi.version>
         <junit.version>5.10.2</junit.version>
         <apache.log4j.version>2.21.1</apache.log4j.version>
         <lombok.version>1.18.30</lombok.version>
@@ -60,9 +60,13 @@
     <distributionManagement>
         <repository>
             <id>github</id>
-            <name>GitHub ayu-sh-kr Apache Maven Packages</name>
+            <name>GitHub Packages</name>
             <url>https://maven.pkg.github.com/ayu-sh-kr/excel4j</url>
         </repository>
+        <snapshotRepository>
+            <id>github</id>
+            <url>https://maven.pkg.github.com/ayu-sh-kr/excel4j</url>
+        </snapshotRepository>
     </distributionManagement>
 
     <build>
