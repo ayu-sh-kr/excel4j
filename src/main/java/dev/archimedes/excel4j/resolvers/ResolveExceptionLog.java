@@ -1,6 +1,5 @@
 package dev.archimedes.excel4j.resolvers;
 
-import dev.archimedes.excel4j.resolvers.FieldResolver;
 import org.apache.poi.ss.usermodel.Cell;
 
 import java.lang.reflect.Field;
@@ -16,11 +15,15 @@ public class ResolveExceptionLog {
             case NUMERIC -> {
                 msg.append("Numeric Value: ");
                 msg.append(cell.getNumericCellValue());
+                msg.append(" at row");
+                msg.append(cell.getRowIndex());
                 return msg.toString();
             }
             case STRING -> {
                 msg.append("String Value: ");
                 msg.append(cell.getStringCellValue());
+                msg.append(" at row");
+                msg.append(cell.getRowIndex());
                 return msg.toString();
             }
         }

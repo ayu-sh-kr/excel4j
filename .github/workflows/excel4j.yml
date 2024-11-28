@@ -1,5 +1,9 @@
 name: Excel4J Preview Package
-on: release
+on:
+  release:
+    types:
+      - published
+
 jobs:
   publish:
     runs-on: ubuntu-latest
