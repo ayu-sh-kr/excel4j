@@ -4,7 +4,7 @@ import java.util.regex.Pattern;
 
 public enum DateTypeRegex {
     LOCAL_DATE_TIME("^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}$"),
-    LOCAL_TIME("^\\d{4}-\\d{2}-\\d{2}$"),
+    LOCAL_TIME("^(\\d{2}|\\d{1,2}):\\d{2}(?::\\d{2})?(?:\\.\\d{1,3})?(?:\\s?[APap][Mm])?$"),
     LOCAL_DATE("^\\d{2}:\\d{2}:\\d{2}$");
 
     public final String pattern;
