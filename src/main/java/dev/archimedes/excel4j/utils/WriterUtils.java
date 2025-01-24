@@ -7,6 +7,8 @@ import org.apache.poi.ss.usermodel.*;
 import java.lang.reflect.Field;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -51,24 +53,36 @@ public class WriterUtils {
                 }
             }
 
-            case "LocalDateTime" -> {
-                Cell cell = row.createCell(idx, CellType.NUMERIC);
-                LocalDateTime dateTime = (LocalDateTime) field.get(data);
-                if (null != dateTime) {
-                    cell.setCellValue(dateTime.toString());
-                }
-            }
-
             case "List" -> {
                 Cell cell = row.createCell(idx, CellType.STRING);
                 WriterUtils.writeList(cell, field.get(data), option.getListDelimiter());
             }
 
+            case "LocalDateTime" -> {
+                Cell cell = row.createCell(idx, CellType.NUMERIC);
+                LocalDateTime dateTime = (LocalDateTime) field.get(data);
+                if (null != dateTime) {
+                    DateTimeFormatter formatter = DateTimeFormatter.ofPattern(option.getDateTimeRegex());
+                    cell.setCellValue(dateTime.format(formatter));
+                }
+            }
+
+
             case "LocalDate" -> {
                 Cell cell = row.createCell(idx, CellType.NUMERIC);
                 LocalDate date = (LocalDate) field.get(data);
                 if (null != date) {
-                    cell.setCellValue(((LocalDate) field.get(data)).toString());
+                    DateTimeFormatter formatter = DateTimeFormatter.ofPattern(option.getDateRegex());
+                    cell.setCellValue(date.format(formatter));
+                }
+            }
+
+            case "LocalTime" -> {
+                Cell cell = row.createCell(idx, CellType.NUMERIC);
+                LocalTime time = (LocalTime) field.get(data);
+                if(null != time) {
+                    DateTimeFormatter formatter = DateTimeFormatter.ofPattern(option.getTimeRegex());
+                    cell.setCellValue(time.format(formatter));
                 }
             }
 
