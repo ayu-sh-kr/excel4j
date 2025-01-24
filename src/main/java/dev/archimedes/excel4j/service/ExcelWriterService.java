@@ -5,23 +5,29 @@ import dev.archimedes.excel4j.service.contracts.ExcelWriter;
 import dev.archimedes.excel4j.utils.GeneralUtil;
 import dev.archimedes.excel4j.utils.WriterUtils;
 import lombok.RequiredArgsConstructor;
-import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.lang.reflect.Field;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 @RequiredArgsConstructor
 public class ExcelWriterService<T> implements ExcelWriter<T> {
 
-
+    private final List<Exception> exceptions = new ArrayList<>();
     private final ExcelOption<T> option;
 
     @Override
@@ -107,8 +113,13 @@ public class ExcelWriterService<T> implements ExcelWriter<T> {
             return outputStream;
 
         } catch (Exception e) {
-            throw new RuntimeException(e.getLocalizedMessage(), e.getCause());
+            exceptions.add(e);
+        }finally {
+            exceptions.forEach(Throwable::printStackTrace);
+            exceptions.clear();
         }
+
+        return OutputStream.nullOutputStream();
     }
 
     @Override
@@ -137,13 +148,21 @@ public class ExcelWriterService<T> implements ExcelWriter<T> {
             for (Map.Entry<Integer, Field> entry: map.entrySet()){
                 int idx = entry.getKey();
                 Field field = entry.getValue();
-                WriterUtils.write(field, row, t, idx, option);
+                try {
+                    WriterUtils.write(field, row, t, idx, option);
+                }catch (Exception e) {
+                    exceptions.add(e);
+                }
             }
 
             workbook.write(fileOutputStream);
 
-        } catch (IOException | InvalidFormatException | IllegalAccessException e) {
-            throw new RuntimeException(e);
+        } catch (Exception e) {
+            exceptions.add(e);
+        }
+        finally {
+            exceptions.forEach(Throwable::printStackTrace);
+            exceptions.clear();
         }
     }
 
