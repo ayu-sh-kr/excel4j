@@ -34,6 +34,11 @@ public class WriterUtils {
 
     @SuppressWarnings("unused")
     public static <T> void write(Field field, Row row, Object data, int idx, ExcelOption<T> option) throws IllegalAccessException{
+
+        if(field.get(data) == null) {
+            return;
+        }
+
         switch (field.getType().getSimpleName()) {
             case "Integer", "Float", "Double", "int", "float", "double" -> {
                 Cell cell = row.createCell(idx, CellType.NUMERIC);
@@ -48,9 +53,7 @@ public class WriterUtils {
             case "Date" -> {
                 Cell cell = row.createCell(idx, CellType.NUMERIC);
                 Date date = (Date) field.get(data);
-                if (null != date) {
-                    cell.setCellValue(date);
-                }
+                cell.setCellValue(date);
             }
 
             case "List" -> {
@@ -61,29 +64,23 @@ public class WriterUtils {
             case "LocalDateTime" -> {
                 Cell cell = row.createCell(idx, CellType.NUMERIC);
                 LocalDateTime dateTime = (LocalDateTime) field.get(data);
-                if (null != dateTime) {
-                    DateTimeFormatter formatter = DateTimeFormatter.ofPattern(option.getDateTimeRegex());
-                    cell.setCellValue(dateTime.format(formatter));
-                }
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern(option.getDateTimeRegex());
+                cell.setCellValue(dateTime.format(formatter));
             }
 
 
             case "LocalDate" -> {
                 Cell cell = row.createCell(idx, CellType.NUMERIC);
                 LocalDate date = (LocalDate) field.get(data);
-                if (null != date) {
-                    DateTimeFormatter formatter = DateTimeFormatter.ofPattern(option.getDateRegex());
-                    cell.setCellValue(date.format(formatter));
-                }
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern(option.getDateRegex());
+                cell.setCellValue(date.format(formatter));
             }
 
             case "LocalTime" -> {
                 Cell cell = row.createCell(idx, CellType.NUMERIC);
                 LocalTime time = (LocalTime) field.get(data);
-                if(null != time) {
-                    DateTimeFormatter formatter = DateTimeFormatter.ofPattern(option.getTimeRegex());
-                    cell.setCellValue(time.format(formatter));
-                }
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern(option.getTimeRegex());
+                cell.setCellValue(time.format(formatter));
             }
 
             default -> {

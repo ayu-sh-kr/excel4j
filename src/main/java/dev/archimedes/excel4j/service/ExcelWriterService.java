@@ -20,6 +20,7 @@ import java.io.OutputStream;
 import java.lang.reflect.Field;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -101,11 +102,7 @@ public class ExcelWriterService<T> implements ExcelWriter<T> {
 
                 var data = ts.get(i);
 
-                for (Map.Entry<Integer, Field> entry : map.entrySet()) {
-                    int idx = entry.getKey();
-                    Field field = entry.getValue();
-                    WriterUtils.write(field, row, data, idx, option);
-                }
+                writeField(map, row, data);
             }
 
             ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
@@ -116,10 +113,23 @@ public class ExcelWriterService<T> implements ExcelWriter<T> {
             exceptions.add(e);
         }finally {
             exceptions.forEach(Throwable::printStackTrace);
+            System.out.println(MessageFormat.format("Total number of exception encountered: {0}", exceptions.size()));
             exceptions.clear();
         }
 
         return OutputStream.nullOutputStream();
+    }
+
+    private void writeField(Map<Integer, Field> map, Row row, T data) {
+        for (Map.Entry<Integer, Field> entry : map.entrySet()) {
+            int idx = entry.getKey();
+            Field field = entry.getValue();
+            try {
+                WriterUtils.write(field, row, data, idx, option);
+            }catch (Exception e) {
+                exceptions.add(e);
+            }
+        }
     }
 
     @Override
@@ -145,15 +155,7 @@ public class ExcelWriterService<T> implements ExcelWriter<T> {
 
             var map = GeneralUtil.getCellMap(option.getClazz());
 
-            for (Map.Entry<Integer, Field> entry: map.entrySet()){
-                int idx = entry.getKey();
-                Field field = entry.getValue();
-                try {
-                    WriterUtils.write(field, row, t, idx, option);
-                }catch (Exception e) {
-                    exceptions.add(e);
-                }
-            }
+            writeField(map, row, t);
 
             workbook.write(fileOutputStream);
 
