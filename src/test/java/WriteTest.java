@@ -3,10 +3,14 @@ import dev.archimedes.excel4j.processors.ExcelProcessor;
 import dev.archimedes.excel4j.service.contracts.ExcelReader;
 import dev.archimedes.excel4j.service.contracts.ExcelWriter;
 import entities.Product;
+import entities.ProductWithTime;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.IOException;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -187,6 +191,51 @@ public class WriteTest {
 
         boolean result = file.delete();
 
+        System.out.println("File deleted: " + result);
+    }
+
+    @Test
+    public void writeJavaTime() throws IOException {
+
+
+        ProductWithTime product = new ProductWithTime(
+                LocalTime.of(19, 30),
+                LocalDateTime.of(2025, 1, 25, 7, 34),
+                LocalDate.of(2025, 1, 25)
+        );
+        System.out.println(product);
+
+        File file = new File("product_test_localtime.xlsx");
+
+        if (!file.exists()) {
+            boolean result = file.createNewFile();
+            System.out.println("File created: " + result);
+        }
+
+        ExcelOption<ProductWithTime> option = ExcelOption.<ProductWithTime>builder()
+                .sheetIndex(0)
+                .start(1)
+                .listDelimiter(";")
+                .dateRegex("dd-MM-yyyy")
+                .timeRgx("HH:mm")
+                .dateTimeRgx("dd:MM:yyyy HH:mm")
+                .overwrite(true)
+                .with(ProductWithTime.class)
+                .build();
+
+        ExcelWriter<ProductWithTime> writer = ExcelProcessor.getWriterFromOption(option);
+        ExcelReader<ProductWithTime> reader = ExcelProcessor.getReaderFromOption(option);
+
+        writer.write(file, product);
+
+        ProductWithTime product1 = reader.readOne(file);
+        System.out.println(product1);
+
+        assertEquals(product.getTime(), product1.getTime(), "Both LocalTime values should be equal");
+        assertEquals(product.getDate(), product1.getDate(), "Both LocalDate values should be equal");
+        assertEquals(product.getDateTime(), product1.getDateTime(), "Both LocalDateTime values should be equal");
+
+        boolean result = file.delete();
         System.out.println("File deleted: " + result);
     }
 }
