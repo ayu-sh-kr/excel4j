@@ -51,11 +51,11 @@ public class ExcelOption<T> {
 
         private String dateRgx = "dd/MM/yyyy";
 
-        private String dateTimeRgx = "dd/MM/yyyy hh:mm:ss";
+        private String dateTimeRgx = "dd/MM/yyyy hh:mm:ss a";
 
         private boolean overwrite = false;
 
-        private String timeRgx = "hh:mm:ss";
+        private String timeRgx = "hh:mm:ss a";
 
         public ExcelOptionBuilder<T> with(Class<T> clazz) {
             this.clazz = clazz;
