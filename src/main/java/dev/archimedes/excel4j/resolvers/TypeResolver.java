@@ -192,7 +192,7 @@ public class TypeResolver {
                     }
                 }
                 case STRING -> {
-                    if (StringUtil.isNotBlank(cell.getStringCellValue()) && DateTypeRegex.validate(cell.getStringCellValue(), DateTypeRegex.LOCAL_DATE)) {
+                    if (StringUtil.isNotBlank(cell.getStringCellValue())) {
                         DateTimeFormatter formatter = DateTimeFormatter.ofPattern(option.getDateRegex());
                         LocalDate date = LocalDate.parse(cell.getStringCellValue(), formatter);
                         field.set(instance, date);
@@ -225,7 +225,7 @@ public class TypeResolver {
                 }
 
                 case STRING -> {
-                    if (StringUtil.isNotBlank(cell.getStringCellValue()) && DateTypeRegex.validate(cell.getStringCellValue(), DateTypeRegex.LOCAL_DATE_TIME)) {
+                    if (StringUtil.isNotBlank(cell.getStringCellValue())) {
                         DateTimeFormatter formatter = DateTimeFormatter.ofPattern(option.getDateTimeRegex());
                         LocalDateTime date = LocalDateTime.parse(cell.getStringCellValue(), formatter);
                         field.set(instance, date);
